@@ -268,9 +268,10 @@ class ApiClient {
     public async put<T>(
         url: string,
         data?: any
-    ): Promise<ApiResponse<T>> {
+    ): Promise<T> {
+        // the interceptor returns the body as-is — the API doesn't wrap it in ApiResponse
         const response =
-            await this.client.put<ApiResponse<T>>(
+            await this.client.put<T>(
                 url,
                 data
             );

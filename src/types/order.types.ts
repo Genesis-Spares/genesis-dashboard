@@ -63,6 +63,20 @@ export interface OrderNote {
     updatedAt: string;
 }
 
+/** One M-Pesa STK push attempt. */
+export interface OrderPayment {
+    id: string;
+    provider: string;
+    status: 'PENDING' | 'SUCCESS' | 'FAILED';
+    amount: string | number;
+    phone: string;
+    receiptNumber?: string | null;
+    resultCode?: number | null;
+    resultDesc?: string | null;
+    createdAt: string;
+    paidAt?: string | null;
+}
+
 export interface Order {
     id: string;
     orderNumber: string;
@@ -76,9 +90,15 @@ export interface Order {
     currency: string;
     subtotal: string | number;
     taxAmount: string | number;
+    /** VAT % applied at checkout */
+    taxRate?: string | number | null;
     shippingAmount: string | number;
     discountAmount: string | number;
     total: string | number;
+    deliveryZoneName?: string | null;
+    /** unpaid M-Pesa orders are cancelled automatically after this */
+    paymentDueAt?: string | null;
+    payments?: OrderPayment[];
     couponCode?: string;
     customerNote?: string;
     shippingAddress: OrderAddress;
