@@ -8,6 +8,7 @@ import {
     TrashIcon,
     MapPinIcon,
     StarIcon as StarOutlineIcon,
+    EnvelopeIcon,
 } from '@heroicons/react/24/outline';
 import { StarIcon } from '@heroicons/react/24/solid';
 import { DeleteConfirmationModal } from '@/components/common/DeleteConfirmationModal';
@@ -37,6 +38,8 @@ import { ActivitiesTab } from './tabs/ActivitiesTab';
 import { OverviewTab } from './tabs/OverviewTab';
 import { OrdersTab } from './tabs/OrdersTab';
 import { CartTab } from './tabs/CartTab';
+import { EmailsTab } from './tabs/EmailsTab';
+import { EmailComposer } from '@/features/emails/components/EmailComposer';
 
 // ============================================
 // TYPES & HELPERS
@@ -51,7 +54,7 @@ interface CustomerViewProps {
     isDeleting?: boolean;
 }
 
-type TabId = 'overview' | 'addresses' | 'notes' | 'preferences' | 'orders' | 'cart' | 'activities';
+type TabId = 'overview' | 'addresses' | 'notes' | 'preferences' | 'orders' | 'cart' | 'emails' | 'activities';
 
 function initials(customer: Customer) {
     return `${customer.firstName?.[0] ?? ''}${customer.lastName?.[0] ?? ''}`.toUpperCase();
@@ -64,6 +67,7 @@ const tabs: { id: TabId; label: string }[] = [
     { id: 'preferences', label: 'Preferences' },
     { id: 'orders', label: 'Orders' },
     { id: 'cart', label: 'Cart' },
+    { id: 'emails', label: 'Emails' },
     { id: 'activities', label: 'Activities' },
 ];
 
@@ -82,11 +86,13 @@ export function CustomerView({
     const [deleteModalOpen, setDeleteModalOpen] = useState(false);
     const [activeTab, setActiveTab] = useState<TabId>('overview');
     const [menuOpen, setMenuOpen] = useState(false);
+    const [composing, setComposing] = useState(false);
     const menuRef = useRef<HTMLDivElement>(null);
 
     const { can } = usePermissions();
     const canManage = can({ permission: 'customer:manage' });
     const canDelete = can({ permission: 'customer:delete' });
+    const canEmail = can({ permission: 'message:create' });
 
     // Close menu on click outside
     useEffect(() => {
@@ -191,6 +197,15 @@ export function CustomerView({
 
                     {/* Actions */}
                     <div className="flex items-center gap-2">
+                        {canEmail && (
+                            <button
+                                onClick={() => setComposing(true)}
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                            >
+                                <EnvelopeIcon className="w-4 h-4" />
+                                Email
+                            </button>
+                        )}
                         {canManage && (
                             <button
                                 onClick={onEdit}
@@ -304,11 +319,24 @@ export function CustomerView({
                         <CartTab userId={customer.userId} />
                     )}
 
+                    {activeTab === 'emails' && (
+                        <EmailsTab customerId={customer.id} onCompose={canEmail ? () => setComposing(true) : undefined} />
+                    )}
+
                     {activeTab === 'activities' && (
                         <ActivitiesTab activities={activities ?? []} />
                     )}
                 </div>
             </div>
+
+            {composing && (
+                <EmailComposer
+                    draftId={null}
+                    seed={{ recipients: [{ email: customer.email.toLowerCase(), name: fullName || undefined, customerId: customer.id }] }}
+                    onClose={() => setComposing(false)}
+                    onSent={() => setActiveTab('emails')}
+                />
+            )}
 
             {/* Delete Modal */}
             <DeleteConfirmationModal
