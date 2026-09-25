@@ -75,7 +75,7 @@ export function NotesTab({
     const { user } = useAuth();
 
     // Get the author ID from the authenticated user
-    const authorId = user?.id || user?.userId || user?.sub;
+    const authorId = user?.id || user?.sub;
 
     console.log("📝 Author ID from auth:", authorId);
     console.log("👤 Full user object:", user);

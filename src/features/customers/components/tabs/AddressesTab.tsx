@@ -22,7 +22,7 @@ interface Address {
 interface AddressesTabProps {
     addresses: Address[];
     canManage: boolean;
-    onAddAddress: (data: any, onSuccess?: () => void) => void;  // Allow optional callback
+    onAddAddress: (data: any) => void;
     onDeleteAddress: (id: string) => void;
     isAdding: boolean;
     isDeleting?: boolean;

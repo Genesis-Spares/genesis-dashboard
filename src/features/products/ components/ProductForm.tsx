@@ -305,7 +305,7 @@ export function ProductForm({ mode, initialData, onSubmit, isSubmitting = false,
                 ...v,
                 price: parseNumber(v.price, 0),
                 comparePrice: parseOptionalNumber(v.comparePrice),
-                stockQty: parseOptionalNumber(v.stockQty),
+                stockQty: parseNumber(v.stockQty, 0),
                 weight: parseOptionalNumber(v.weight),
             })),
             attributes: form.attributes?.map((attr) => ({

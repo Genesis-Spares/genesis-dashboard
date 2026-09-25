@@ -50,7 +50,7 @@ export function NotesTab({
     const [editContent, setEditContent] = useState('');
 
     const { user } = useAuth();
-    const authorId = user?.id || user?.userId || user?.sub;
+    const authorId = user?.id || user?.sub;
 
     const handleAdd = () => {
         if (!content.trim() || !authorId) return;
