@@ -22,6 +22,7 @@ import {
     QuestionMarkCircleIcon,
     BoltIcon,
     ArrowUturnLeftIcon,
+    EnvelopeIcon,
 } from '@heroicons/react/24/outline';
 import type { ComponentType, SVGProps } from 'react';
 
@@ -54,6 +55,7 @@ const iconMap: Record<string, IconComponent> = {
     UserGroupIcon,
     BoltIcon,
     ArrowUturnLeftIcon,
+    EnvelopeIcon,
 };
 
 /**
