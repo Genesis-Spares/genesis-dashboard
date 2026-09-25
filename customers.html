@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Customer — Genesis Admin</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    </script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eff6ff', 100: '#dbeafe', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .tab-btn.active {
+            border-color: #2563eb;
+            color: #2563eb;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #e5e7eb;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900 min-h-screen">
+
+    <div class="max-w-7xl mx-auto px-6 py-8">
+
+        <!-- Header -->
+        <div class="flex items-center justify-between flex-wrap gap-3 pb-4">
+            <div class="flex items-center gap-3">
+                <button
+                    class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 transition-colors">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                    </svg>
+                    Back
+                </button>
+                <div class="h-5 w-px bg-gray-200"></div>
+
+                <div
+                    class="w-11 h-11 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-semibold text-sm shrink-0">
+                    AM
+                </div>
+
+                <div>
+                    <div class="flex items-center gap-2">
+                        <h1 class="text-2xl font-bold text-gray-900">Amina Mwangi</h1>
+                        <span
+                            class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Active</span>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">VIP</span>
+                    </div>
+                    <p class="text-sm text-gray-400">Customer #CU-GEN-2026-00317 &middot; Joined 14 Feb 2025</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    title="Call customer">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" />
+                    </svg>
+                </button>
+                <button class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors"
+                    title="Email customer">
+                    <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                        stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+                    </svg>
+                </button>
+                <button
+                    class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700 transition-colors">
+                    Edit
+                </button>
+                <div class="relative">
+                    <button onclick="document.getElementById('moreMenu').classList.toggle('hidden')"
+                        class="p-2 rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                        <svg class="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                            stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM12.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0zM18.75 12a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
+                        </svg>
+                    </button>
+                    <div id="moreMenu"
+                        class="hidden absolute right-0 mt-2 w-44 rounded-lg border border-gray-100 bg-white shadow-lg py-1 z-10">
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Suspend
+                            account</button>
+                        <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">Reset
+                            password</button>
+                        <button class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Delete
+                            customer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab strip -->
+        <div class="border-b border-gray-200 flex gap-6 overflow-x-auto">
+            <button data-tab="profile"
+                class="tab-btn active px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Profile</button>
+            <button data-tab="orders"
+                class="tab-btn px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Orders</button>
+            <button data-tab="messages"
+                class="tab-btn px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Messages</button>
+            <button data-tab="email"
+                class="tab-btn px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Email</button>
+            <button data-tab="addresses"
+                class="tab-btn px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Addresses</button>
+            <button data-tab="notes"
+                class="tab-btn px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Notes</button>
+            <button data-tab="activity"
+                class="tab-btn px-1 py-3 text-sm font-medium border-b-2 -mb-px whitespace-nowrap border-transparent text-gray-500 hover:text-gray-700 transition-colors">Activity</button>
+        </div>
+
+        <!-- Tab content -->
+        <div class="pt-6">
+
+            <!-- PROFILE -->
+            <div id="profile" class="tab-panel active space-y-6">
+
+                <!-- Stats -->
+                <div class="rounded-2xl border border-gray-100 bg-gray-50/60 py-8">
+                    <div class="flex flex-wrap justify-around gap-y-6">
+                        <div class="flex flex-col items-center text-center gap-1 px-4">
+                            <span class="text-3xl font-bold text-blue-600">23</span>
+                            <span class="text-sm text-gray-500">Total Orders</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center gap-1 px-4">
+                            <span class="text-3xl font-bold text-blue-600">KES 184K</span>
+                            <span class="text-sm text-gray-500">Total Spent</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center gap-1 px-4">
+                            <span class="text-3xl font-bold text-blue-600">6</span>
+                            <span class="text-sm text-gray-500">Days Since Last Order</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center gap-1 px-4">
+                            <span class="text-3xl font-bold text-blue-600">2</span>
+                            <span class="text-sm text-gray-500">Open Tickets</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center gap-1 px-4">
+                            <span class="text-3xl font-bold text-blue-600">4.8</span>
+                            <span class="text-sm text-gray-500">Avg. Rating Given</span>
+                        </div>
+                        <div class="flex flex-col items-center text-center gap-1 px-4">
+                            <span class="text-3xl font-bold text-blue-600">KES 0.00</span>
+                            <span class="text-sm text-gray-500">Outstanding Balance</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="lg:col-span-2 space-y-6">
+                        <div class="rounded-2xl border border-gray-100 bg-white p-6">
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Contact
+                                Information</h3>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+                                <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                                    <span class="text-sm text-gray-500">Email</span>
+                                    <span class="text-sm font-medium text-gray-800">amina.mwangi@gmail.com</span>
+                                </div>
+                                <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                                    <span class="text-sm text-gray-500">Phone</span>
+                                    <span class="text-sm font-medium text-gray-800">+254 712 445 908</span>
+                                </div>
+                                <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                                    <span class="text-sm text-gray-500">City</span>
+                                    <span class="text-sm font-medium text-gray-800">Nairobi, Kenya</span>
+                                </div>
+                                <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                                    <span class="text-sm text-gray-500">Preferred contact</span>
+                                    <span class="text-sm font-medium text-gray-800">WhatsApp</span>
+                                </div>
+                                <div class="flex items-center justify-between py-2">
+                                    <span class="text-sm text-gray-500">Vehicle on file</span>
+                                    <span class="text-sm font-medium text-gray-800">Toyota Axio, 2013</span>
+                                </div>
+                                <div class="flex items-center justify-between py-2">
+                                    <span class="text-sm text-gray-500">Referred by</span>
+                                    <span class="text-sm font-medium text-gray-800">Instagram Ad</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-gray-100 bg-white p-6">
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Recent Orders
+                            </h3>
+                            <div class="space-y-3">
+                                <div
+                                    class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800">#ORD-4471</p>
+                                        <p class="text-xs text-gray-400">Brake pads, oil filter &middot; 24 Aug 2026</p>
+                                    </div>
+                                    <span
+                                        class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Delivered</span>
+                                </div>
+                                <div
+                                    class="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800">#ORD-4390</p>
+                                        <p class="text-xs text-gray-400">Headlight assembly &middot; 02 Aug 2026</p>
+                                    </div>
+                                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">In
+                                        Transit</span>
+                                </div>
+                                <div class="flex items-center justify-between py-2">
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-800">#ORD-4212</p>
+                                        <p class="text-xs text-gray-400">Timing belt kit &middot; 11 Jul 2026</p>
+                                    </div>
+                                    <span
+                                        class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Delivered</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6">
+                        <div class="rounded-2xl border border-gray-100 bg-white p-6">
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Customer Tags
+                            </h3>
+                            <div class="flex flex-wrap gap-1.5">
+                                <span
+                                    class="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600 font-medium">VIP</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Repeat
+                                    buyer</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Toyota
+                                    parts</span>
+                                <span class="text-xs px-2 py-1 rounded-full bg-gray-100 text-gray-600">Nairobi</span>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-gray-100 bg-white p-6">
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Loyalty</h3>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                                <span class="text-sm text-gray-500">Tier</span>
+                                <span class="text-sm font-medium text-gray-800">Gold</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2">
+                                <span class="text-sm text-gray-500">Points balance</span>
+                                <span class="text-sm font-medium text-gray-800">2,340 pts</span>
+                            </div>
+                        </div>
+
+                        <div class="rounded-2xl border border-gray-100 bg-white p-6">
+                            <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Account</h3>
+                            <div class="flex items-center justify-between py-2 border-b border-gray-50">
+                                <span class="text-sm text-gray-500">Customer since</span>
+                                <span class="text-sm font-medium text-gray-800">14 Feb 2025</span>
+                            </div>
+                            <div class="flex items-center justify-between py-2">
+                                <span class="text-sm text-gray-500">Last login</span>
+                                <span class="text-sm font-medium text-gray-800">Today, 08:14</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ORDERS -->
+            <div id="orders" class="tab-panel space-y-4">
+                <div class="rounded-2xl border border-gray-100 bg-white overflow-hidden">
+                    <table class="w-full text-sm">
+                        <thead class="bg-gray-50">
+                            <tr class="text-left text-gray-400">
+                                <th class="py-3 px-5 font-medium">Order</th>
+                                <th class="py-3 px-5 font-medium">Items</th>
+                                <th class="py-3 px-5 font-medium">Date</th>
+                                <th class="py-3 px-5 font-medium text-right">Total</th>
+                                <th class="py-3 px-5 font-medium">Status</th>
+                                <th class="py-3 px-5 font-medium"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-50">
+                            <tr class="hover:bg-gray-50/60">
+                                <td class="py-3 px-5 font-medium text-gray-800">#ORD-4471</td>
+                                <td class="py-3 px-5 text-gray-500">Brake pads, oil filter</td>
+                                <td class="py-3 px-5 text-gray-500">24 Aug 2026</td>
+                                <td class="py-3 px-5 text-right font-medium">KES 8,400</td>
+                                <td class="py-3 px-5"><span
+                                        class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Delivered</span>
+                                </td>
+                                <td class="py-3 px-5 text-right"><button
+                                        class="text-blue-600 text-xs font-medium hover:underline">View</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/60">
+                                <td class="py-3 px-5 font-medium text-gray-800">#ORD-4390</td>
+                                <td class="py-3 px-5 text-gray-500">Headlight assembly</td>
+                                <td class="py-3 px-5 text-gray-500">02 Aug 2026</td>
+                                <td class="py-3 px-5 text-right font-medium">KES 12,900</td>
+                                <td class="py-3 px-5"><span
+                                        class="text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">In
+                                        Transit</span></td>
+                                <td class="py-3 px-5 text-right"><button
+                                        class="text-blue-600 text-xs font-medium hover:underline">View</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/60">
+                                <td class="py-3 px-5 font-medium text-gray-800">#ORD-4212</td>
+                                <td class="py-3 px-5 text-gray-500">Timing belt kit</td>
+                                <td class="py-3 px-5 text-gray-500">11 Jul 2026</td>
+                                <td class="py-3 px-5 text-right font-medium">KES 15,200</td>
+                                <td class="py-3 px-5"><span
+                                        class="text-xs font-bold px-2 py-0.5 rounded-full bg-green-50 text-green-600">Delivered</span>
+                                </td>
+                                <td class="py-3 px-5 text-right"><button
+                                        class="text-blue-600 text-xs font-medium hover:underline">View</button></td>
+                            </tr>
+                            <tr class="hover:bg-gray-50/60">
+                                <td class="py-3 px-5 font-medium text-gray-800">#ORD-3998</td>
+                                <td class="py-3 px-5 text-gray-500">Wiper blades, coolant</td>
+                                <td class="py-3 px-5 text-gray-500">03 Jun 2026</td>
+                                <td class="py-3 px-5 text-right font-medium">KES 3,150</td>
+                                <td class="py-3 px-5"><span
+                                        class="text-xs font-bold px-2 py-0.5 rounded-full bg-red-50 text-red-500">Refunded</span>
+                                </td>
+                                <td class="py-3 px-5 text-right"><button
+                                        class="text-blue-600 text-xs font-medium hover:underline">View</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- MESSAGES -->
+            <div id="messages" class="tab-panel">
+                <div class="rounded-2xl border border-gray-100 bg-white p-6 max-w-2xl">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">In-app Messages</h3>
+                    <div class="space-y-4 mb-4">
+                        <div class="flex justify-start">
+                            <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-2 max-w-[75%]">
+                                <p class="text-sm text-gray-800">Hi, is the headlight assembly for Axio 2013 in stock?
+                                </p>
+                                <p class="text-[10px] text-gray-400 mt-1">Amina &middot; 2:14 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-end">
+                            <div class="bg-blue-600 text-white rounded-2xl rounded-tr-sm px-4 py-2 max-w-[75%]">
+                                <p class="text-sm">Yes! We have 4 units left. Want me to hold one for you?</p>
+                                <p class="text-[10px] text-blue-100 mt-1">Support &middot; 2:16 PM</p>
+                            </div>
+                        </div>
+                        <div class="flex justify-start">
+                            <div class="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-2 max-w-[75%]">
+                                <p class="text-sm text-gray-800">Yes please, I'll pick it up tomorrow.</p>
+                                <p class="text-[10px] text-gray-400 mt-1">Amina &middot; 2:17 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 pt-4 border-t border-gray-100">
+                        <input type="text" placeholder="Type a reply…"
+                            class="flex-1 px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40" />
+                        <button
+                            class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMAIL -->
+            <div id="email" class="tab-panel space-y-3">
+                <div class="rounded-2xl border border-gray-100 bg-white divide-y divide-gray-50">
+                    <div class="flex items-center justify-between p-4 hover:bg-gray-50/60 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">Your order #ORD-4471 has been delivered</p>
+                                <p class="text-xs text-gray-400">Sent from orders@genesisparts.co.ke</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-400">24 Aug 2026</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 hover:bg-gray-50/60 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-transparent"></span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">Re: Question about brake pad compatibility
+                                </p>
+                                <p class="text-xs text-gray-400">Sent from support@genesisparts.co.ke</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-400">20 Aug 2026</span>
+                    </div>
+                    <div class="flex items-center justify-between p-4 hover:bg-gray-50/60 cursor-pointer">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full bg-transparent"></span>
+                            <div>
+                                <p class="text-sm font-medium text-gray-800">Your August loyalty points summary</p>
+                                <p class="text-xs text-gray-400">Sent from noreply@genesisparts.co.ke</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-gray-400">01 Aug 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ADDRESSES -->
+            <div id="addresses" class="tab-panel">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="rounded-2xl border border-gray-100 bg-white p-5 relative">
+                        <span
+                            class="absolute top-4 right-4 text-xs font-bold px-2 py-0.5 rounded-full bg-blue-50 text-blue-600">Default</span>
+                        <p class="text-sm font-semibold text-gray-800 mb-1">Home</p>
+                        <p class="text-sm text-gray-500 leading-relaxed">Amina Mwangi<br />House 12B, Kilimani
+                            Ridge<br />Nairobi, 00100<br />Kenya<br />+254 712 445 908</p>
+                    </div>
+                    <div class="rounded-2xl border border-gray-100 bg-white p-5">
+                        <p class="text-sm font-semibold text-gray-800 mb-1">Work</p>
+                        <p class="text-sm text-gray-500 leading-relaxed">Amina Mwangi<br />Britam Tower, 14th
+                            Floor<br />Upper Hill, Nairobi<br />Kenya<br />+254 712 445 908</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NOTES -->
+            <div id="notes" class="tab-panel">
+                <div class="rounded-2xl border border-gray-100 bg-white p-6 max-w-2xl">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Internal Notes</h3>
+                    <p class="text-xs text-gray-400 mb-4">Only visible to staff — never shown to the customer.</p>
+                    <div class="space-y-4 mb-5">
+                        <div class="p-3 rounded-lg bg-yellow-50 border border-yellow-100">
+                            <p class="text-sm text-gray-700">Prefers pickup at the CBD depot over delivery — mentioned
+                                this twice.</p>
+                            <p class="text-[10px] text-gray-400 mt-1">Added by James K. &middot; 12 Jul 2026</p>
+                        </div>
+                        <div class="p-3 rounded-lg bg-gray-50 border border-gray-100">
+                            <p class="text-sm text-gray-700">Referred 2 friends who also purchased — flag for referral
+                                bonus.</p>
+                            <p class="text-[10px] text-gray-400 mt-1">Added by Sarah W. &middot; 03 Jun 2026</p>
+                        </div>
+                    </div>
+                    <textarea rows="3" placeholder="Add an internal note…"
+                        class="w-full px-3 py-2 rounded-lg border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"></textarea>
+                    <div class="flex justify-end mt-2">
+                        <button
+                            class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">Add
+                            Note</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACTIVITY -->
+            <div id="activity" class="tab-panel">
+                <div class="rounded-2xl border border-gray-100 bg-white p-6 max-w-2xl">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-5">Activity Timeline</h3>
+                    <ol class="relative border-s border-gray-100 space-y-6 ms-2">
+                        <li class="ms-4">
+                            <span class="absolute w-2.5 h-2.5 bg-blue-500 rounded-full -start-[5px] mt-1.5"></span>
+                            <p class="text-sm text-gray-800">Order <span class="font-medium">#ORD-4471</span> marked as
+                                delivered</p>
+                            <p class="text-xs text-gray-400">24 Aug 2026, 4:32 PM</p>
+                        </li>
+                        <li class="ms-4">
+                            <span class="absolute w-2.5 h-2.5 bg-gray-300 rounded-full -start-[5px] mt-1.5"></span>
+                            <p class="text-sm text-gray-800">Sent message about headlight assembly stock</p>
+                            <p class="text-xs text-gray-400">20 Aug 2026, 2:14 PM</p>
+                        </li>
+                        <li class="ms-4">
+                            <span class="absolute w-2.5 h-2.5 bg-gray-300 rounded-full -start-[5px] mt-1.5"></span>
+                            <p class="text-sm text-gray-800">Placed order <span class="font-medium">#ORD-4390</span> —
+                                KES 12,900</p>
+                            <p class="text-xs text-gray-400">02 Aug 2026, 11:05 AM</p>
+                        </li>
+                        <li class="ms-4">
+                            <span class="absolute w-2.5 h-2.5 bg-gray-300 rounded-full -start-[5px] mt-1.5"></span>
+                            <p class="text-sm text-gray-800">Redeemed 500 loyalty points</p>
+                            <p class="text-xs text-gray-400">15 Jul 2026, 9:40 AM</p>
+                        </li>
+                        <li class="ms-4">
+                            <span class="absolute w-2.5 h-2.5 bg-gray-300 rounded-full -start-[5px] mt-1.5"></span>
+                            <p class="text-sm text-gray-800">Account created</p>
+                            <p class="text-xs text-gray-400">14 Feb 2025, 10:02 AM</p>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabPanels = document.querySelectorAll('.tab-panel');
+
+        tabButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                tabButtons.forEach((b) => b.classList.remove('active'));
+                tabPanels.forEach((p) => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById(btn.dataset.tab).classList.add('active');
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('moreMenu');
+            if (!e.target.closest('.relative')) menu.classList.add('hidden');
+        });
+    </script>
+
+</body>
+
+</html>
