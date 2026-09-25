@@ -19,6 +19,9 @@ export interface OrderAddress {
     postalCode: string;
     country: string;
     phone?: string;
+    /** drop-off pin the shopper set at checkout */
+    latitude?: number;
+    longitude?: number;
 }
 
 export interface OrderItem {

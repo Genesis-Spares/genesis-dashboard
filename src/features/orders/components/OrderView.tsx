@@ -226,6 +226,12 @@ export function OrderView({ order, onBack }: OrderViewProps) {
                                 <p className="flex gap-1.5"><MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
                                     <span>{order.shippingAddress?.line1}{order.shippingAddress?.line2 ? `, near ${order.shippingAddress.line2}` : ''}<br />{order.shippingAddress?.city}, {order.shippingAddress?.country}</span>
                                 </p>
+                                {order.shippingAddress?.latitude != null && order.shippingAddress?.longitude != null && (
+                                    <a href={`https://www.google.com/maps/search/?api=1&query=${order.shippingAddress.latitude},${order.shippingAddress.longitude}`}
+                                        target="_blank" rel="noreferrer" className="ml-5 mt-1 inline-block text-xs font-medium text-blue-600 hover:underline">
+                                        Open delivery pin in Google Maps ↗
+                                    </a>
+                                )}
                             </div>
                             {order.customerNote && <p className="rounded-lg border border-dashed border-gray-200 px-3 py-2 text-xs text-gray-600 dark:border-gray-700 dark:text-gray-300">{order.customerNote}</p>}
                         </div>
