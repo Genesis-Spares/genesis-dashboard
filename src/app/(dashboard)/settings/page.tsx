@@ -6,6 +6,7 @@ import {
     ShieldCheckIcon,
     UserCircleIcon,
     ChevronRightIcon,
+    TruckIcon,
 } from '@heroicons/react/24/outline';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import { usePermissions } from '@/lib/hooks/usePermissions';
@@ -38,6 +39,14 @@ const SETTINGS_CARDS: SettingsCard[] = [
         permission: 'role:read',
     },
     {
+        id: 'delivery',
+        title: 'Delivery & VAT',
+        description: 'Delivery zones and fees, pay-on-delivery areas, and the VAT rate charged at checkout.',
+        href: '/settings/delivery',
+        icon: TruckIcon,
+        permission: 'settings:read',
+    },
+    {
         id: 'profile',
         title: 'My Profile',
         description: 'Update your own name, phone number, and account details.',
@@ -66,7 +75,7 @@ function SettingsPageContent() {
             <div className="mb-6">
                 <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Settings</h1>
                 <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Manage users, roles and your own account.
+                    Manage users, roles, delivery and VAT, and your own account.
                 </p>
             </div>
 

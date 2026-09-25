@@ -182,7 +182,7 @@ export function OrderView({ order, onBack }: OrderViewProps) {
                         <dl className="space-y-1.5 border-t border-gray-100 bg-gray-50/60 px-5 py-4 text-[13px] dark:border-gray-700/70 dark:bg-gray-900/20">
                             <Row label="Subtotal" value={formatMoney(order.subtotal, order.currency)} />
                             <Row label="Delivery" value={Number(order.shippingAmount) ? formatMoney(order.shippingAmount, order.currency) : 'Free'} />
-                            {Number(order.taxAmount) > 0 && <Row label="Tax" value={formatMoney(order.taxAmount, order.currency)} />}
+                            {Number(order.taxAmount) > 0 && <Row label={`VAT${order.taxRate != null ? ` (${Number(order.taxRate)}%)` : ''}`} value={formatMoney(order.taxAmount, order.currency)} />}
                             {Number(order.discountAmount) > 0 && <Row label={`Discount${order.couponCode ? ` (${order.couponCode})` : ''}`} value={`−${formatMoney(order.discountAmount, order.currency)}`} />}
                             <div className="flex justify-between border-t border-gray-200 pt-2 text-sm font-semibold text-gray-900 dark:border-gray-700 dark:text-white">
                                 <dt>Total</dt><dd className="tabular-nums">{formatMoney(order.total, order.currency)}</dd>
@@ -218,6 +218,9 @@ export function OrderView({ order, onBack }: OrderViewProps) {
                             ) : (
                                 <p className="text-gray-400">Not dispatched yet.</p>
                             )}
+                            {order.deliveryZoneName && (
+                                <p className="text-xs text-gray-500">Zone <span className="font-medium text-gray-900 dark:text-white">{order.deliveryZoneName}</span></p>
+                            )}
                             <div className="text-gray-600 dark:text-gray-300">
                                 <p className="font-medium text-gray-900 dark:text-white">{order.shippingAddress?.fullName}</p>
                                 <p className="flex gap-1.5"><MapPinIcon className="mt-0.5 h-4 w-4 shrink-0 text-gray-400" />
@@ -234,7 +237,32 @@ export function OrderView({ order, onBack }: OrderViewProps) {
                             <Row label="Method" value={PAYMENT_METHOD[order.paymentMethod ?? ''] ?? order.paymentMethod ?? '—'} />
                             <Row label="Status" value={<span className={`font-semibold ${PAYMENT_BADGE[order.paymentStatus] ?? ''}`}>{order.paymentStatus === 'PENDING' ? 'Unpaid' : title(order.paymentStatus)}</span>} />
                             <Row label="Amount" value={formatMoney(order.total, order.currency)} />
+                            {order.paymentMethod === 'mpesa' && order.status === 'PENDING' && order.paymentStatus !== 'PAID' && order.paymentDueAt && (
+                                <Row label="Auto-cancels" value={dt(order.paymentDueAt)} />
+                            )}
                         </dl>
+                        {!!order.payments?.length && (
+                            <div className="border-t border-gray-100 px-5 py-4 dark:border-gray-700/70">
+                                <p className="mb-2 text-xs font-medium uppercase tracking-wide text-gray-400">M-Pesa attempts</p>
+                                <ul className="space-y-2.5">
+                                    {order.payments.map((p) => (
+                                        <li key={p.id} className="text-[12.5px]">
+                                            <div className="flex items-center justify-between gap-2">
+                                                <span className={`font-semibold ${p.status === 'SUCCESS' ? 'text-emerald-600' : p.status === 'FAILED' ? 'text-rose-600' : 'text-amber-600'}`}>
+                                                    {p.status === 'SUCCESS' ? 'Paid' : p.status === 'FAILED' ? 'Failed' : 'Waiting for PIN'}
+                                                </span>
+                                                <span className="text-gray-400">{dt(p.createdAt)}</span>
+                                            </div>
+                                            <p className="text-gray-600 dark:text-gray-300">
+                                                {formatMoney(p.amount, order.currency)} from <span className="font-mono">{p.phone}</span>
+                                                {p.receiptNumber && <> · <span className="font-mono font-semibold text-gray-900 dark:text-white">{p.receiptNumber}</span></>}
+                                            </p>
+                                            {p.status === 'FAILED' && p.resultDesc && <p className="text-gray-400">{p.resultDesc}</p>}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </section>
 
                     <section className={card}>
