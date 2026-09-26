@@ -6,8 +6,11 @@
  * anything else with store or customer data. The API lives on another origin and is
  * ignored entirely, so data is always live and nothing private stays on the device.
  * With no connection, page loads show a small offline screen instead of an error.
+ *
+ * It also shows push notifications from the API (new orders, returns, messages,
+ * low stock) and opens the right dashboard page when one is tapped.
  */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const STATIC_CACHE = `genesis-static-${VERSION}`;
 const MAX_STATIC_ENTRIES = 300;
 
@@ -77,4 +80,45 @@ self.addEventListener('fetch', (event) => {
         })());
     }
     // Everything else (RSC payloads, /_next/image, manifest…): browser default.
+});
+
+// ── Push notifications ──────────────────────────────────────────────────────────
+
+self.addEventListener('push', (event) => {
+    let data = {};
+    try {
+        data = event.data ? event.data.json() : {};
+    } catch {
+        data = { title: 'Genesis', body: event.data ? event.data.text() : '' };
+    }
+    const title = data.title || 'Genesis';
+    event.waitUntil((async () => {
+        await self.registration.showNotification(title, {
+            body: data.body || '',
+            icon: data.icon || '/icons/icon-192.png',
+            badge: data.badge || '/icons/badge-72.png',
+            tag: data.tag,
+            renotify: !!data.tag,
+            data: { url: data.url || '/dashboard' },
+        });
+        // let any open dashboard refresh its bell straight away
+        const open = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        open.forEach((c) => c.postMessage({ type: 'push-received' }));
+    })());
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const target = new URL((event.notification.data && event.notification.data.url) || '/dashboard', self.location.origin);
+    if (target.origin !== self.location.origin) return; // only ever open our own pages
+    event.waitUntil((async () => {
+        const open = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+        const existing = open.find((c) => new URL(c.url).origin === self.location.origin);
+        if (existing) {
+            await existing.focus();
+            if ('navigate' in existing) return existing.navigate(target.href);
+            return undefined;
+        }
+        return self.clients.openWindow(target.href);
+    })());
 });
