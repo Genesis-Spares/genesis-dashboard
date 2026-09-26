@@ -1,13 +1,13 @@
 // src/components/layout/Sidebar.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSidebarStore } from '@/lib/stores/sidebarStore';
 import { useAuthStore } from '@/lib/stores/authStore';
 import { usePermissions } from '@/lib/hooks/usePermissions';
-import { SidebarItem } from '@/types/sidebar.types';
+import { SidebarItem, SidebarSection } from '@/types/sidebar.types';
 import {
     ChevronDoubleLeftIcon,
     ChevronDoubleRightIcon,
@@ -18,6 +18,13 @@ import {
 } from '@heroicons/react/24/outline';
 import { resolveIcon } from '@/lib/utils/iconMap';
 import { useIsDrawerNav } from '@/hooks/use-mobile';
+import { useUrgentOrderCount } from '@/features/orders/hooks/useUrgentOrderCount';
+
+// the live storefront, opened from the "Your Shop" link
+const STOREFRONT_URL = process.env.NEXT_PUBLIC_STOREFRONT_URL || 'https://genisis.space';
+
+const flatten = (items: SidebarItem[]): SidebarItem[] =>
+    items.flatMap((i) => [i, ...(i.children ? flatten(i.children) : [])]);
 
 interface SidebarProps {
     mobileOpen?: boolean;
@@ -33,6 +40,26 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
     // right on first paint, this flag only picks drawer vs collapsible-rail rendering
     const isMobile = useIsDrawerNav();
     const [expandedItems, setExpandedItems] = useState<string[]>([]);
+
+    const sections = config?.sections ?? [];
+    const mainSections = sections.filter((s) => s.placement !== 'footer');
+    const footerSections = sections.filter((s) => s.placement === 'footer');
+
+    // Highlight only the most specific match, so /orders/urgent lights up
+    // "Urgent orders" rather than both it and "Orders".
+    const activePath = useMemo(() => {
+        const paths = sections.flatMap((s) => flatten(s.items)).map((i) => i.path);
+        return paths
+            .filter((p) => pathname === p || pathname.startsWith(`${p}/`))
+            .sort((a, b) => b.length - a.length)[0];
+    }, [sections, pathname]);
+
+    // Live counters for items that declare a `badge`
+    const wantsUrgent = sections.some((s) => flatten(s.items).some((i) => i.badge === 'urgent-orders'));
+    const urgent = useUrgentOrderCount(wantsUrgent && can({ permission: 'order:read' }));
+    const badges: Record<string, string | undefined> = {
+        'urgent-orders': urgent.data?.count ? `${urgent.data.count}${urgent.data.more ? '+' : ''}` : undefined,
+    };
 
     useEffect(() => {
         fetchSidebar();
@@ -70,7 +97,8 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
             return null;
         }
 
-        const isActive = pathname === item.path || pathname.startsWith(`${item.path}/`);
+        const isActive = item.path === activePath;
+        const badge = item.badge ? badges[item.badge] : undefined;
         const isExpanded = expandedItems.includes(item.id);
         const hasChildren = item.children && item.children.length > 0;
         const Icon = resolveIcon(item.icon);
@@ -106,9 +134,28 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
                         )}
                     </div>
                 ) : (
-                    <Link href={item.path} className={baseClasses}>
-                        <Icon className="w-5 h-5 shrink-0" />
-                        {(!collapsed || isMobile) && <span className="ml-3">{item.title}</span>}
+                    <Link
+                        href={item.path}
+                        className={baseClasses}
+                        aria-current={isActive ? 'page' : undefined}
+                        title={collapsed && !isMobile ? item.title : undefined}
+                    >
+                        <span className="relative shrink-0">
+                            <Icon className="w-5 h-5" />
+                            {/* collapsed rail: a dot instead of the number */}
+                            {badge && collapsed && !isMobile && (
+                                <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-white dark:ring-gray-800" />
+                            )}
+                        </span>
+                        {(!collapsed || isMobile) && <span className="ml-3 flex-1 truncate">{item.title}</span>}
+                        {badge && (!collapsed || isMobile) && (
+                            <span
+                                aria-label={`${badge} need attention`}
+                                className={`ml-2 min-w-[1.25rem] rounded-full px-1.5 py-0.5 text-center text-[11px] font-semibold leading-none tabular-nums ${isActive ? 'bg-white/25 text-white' : 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300'}`}
+                            >
+                                {badge}
+                            </span>
+                        )}
                     </Link>
                 )}
             </li>
@@ -178,8 +225,8 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 px-3 overflow-y-auto">
-                    {config.sections.map((section) => (
+                <nav aria-label="Main" className="flex-1 px-3 overflow-y-auto">
+                    {mainSections.map((section: SidebarSection) => (
                         <div key={section.id} className="mb-4">
                             {(!collapsed || isMobile) && section.title && (
                                 <div className="px-3 py-2 text-xs font-medium text-gray-400 uppercase tracking-wide">
@@ -193,9 +240,18 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
                     ))}
                 </nav>
 
-                {/* User + shop footer */}
+                {/* Footer: pinned items (Settings), the signed-in user, and the storefront */}
                 <div className="shrink-0 p-3 border-t border-gray-100 dark:border-gray-700 space-y-2">
-                    <div className={`flex items-center gap-2 px-2 py-1.5 ${collapsed && !isMobile ? 'justify-center' : ''}`}>
+                    {footerSections.map((section) => (
+                        <ul key={section.id} className="space-y-1">
+                            {section.items.map((item) => renderItem(item))}
+                        </ul>
+                    ))}
+                    <Link
+                        href="/settings/profile"
+                        title="My profile"
+                        className={`flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 ${collapsed && !isMobile ? 'justify-center' : ''}`}
+                    >
                         <UserAvatar user={user} />
                         {(!collapsed || isMobile) && (
                             <div className="min-w-0 flex-1">
@@ -208,10 +264,13 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
                         {(!collapsed || isMobile) && (
                             <ArrowUpRightIcon className="w-4 h-4 text-gray-300 shrink-0" />
                         )}
-                    </div>
+                    </Link>
 
-                    <Link
-                        href="/shop"
+                    <a
+                        href={STOREFRONT_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title="Open the storefront in a new tab"
                         className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border border-gray-100 dark:border-gray-700 text-sm font-medium text-gray-600 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-700 ${collapsed && !isMobile ? 'justify-center' : ''
                             }`}
                     >
@@ -222,7 +281,7 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
                                 <ArrowUpRightIcon className="w-4 h-4 text-gray-300" />
                             </>
                         )}
-                    </Link>
+                    </a>
                 </div>
             </aside>
         </>

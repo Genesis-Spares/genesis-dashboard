@@ -38,7 +38,9 @@ export const config = {
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
          * - public folder
+         * - PWA files, which browsers fetch without the login cookie:
+         *   manifest.webmanifest, sw.js, icons/
          */
-        '/((?!_next/static|_next/image|favicon.ico|public).*)',
+        '/((?!_next/static|_next/image|favicon.ico|public|manifest.webmanifest|sw.js|icons/).*)',
     ],
 };
