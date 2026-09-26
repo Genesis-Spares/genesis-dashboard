@@ -80,8 +80,8 @@ export default function DeliverySettingsManager() {
                         No delivery zones yet — checkout can&apos;t deliver anywhere until you add one.
                     </div>
                 ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full min-w-[820px] text-left text-sm">
+                    <div className="relative overflow-x-auto">
+                        <table className="w-full min-w-[820px] text-left text-sm responsive-table">
                             <thead className="border-b border-gray-100 text-xs uppercase tracking-wide text-gray-400 dark:border-gray-800">
                                 <tr>
                                     <th className="px-6 py-3 font-medium">Zone</th>
@@ -97,14 +97,14 @@ export default function DeliverySettingsManager() {
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                 {zones.map((z) => (
                                     <tr key={z.id} className={z.isActive ? '' : 'opacity-50'}>
-                                        <td className="px-6 py-3.5">
+                                        <td className="px-6 py-3.5 rt-full">
                                             <div className="font-medium text-gray-900 dark:text-gray-100">{z.name}</div>
                                             <div className="mt-0.5 flex gap-1.5">
                                                 {z.isDefault && <Tag tone="blue">Default</Tag>}
                                                 {!z.isActive && <Tag tone="gray">Inactive</Tag>}
                                             </div>
                                         </td>
-                                        <td className="max-w-[260px] px-3 py-3.5 text-gray-600 dark:text-gray-300">
+                                        <td data-label="Towns" className="max-w-[260px] px-3 py-3.5 text-gray-600 dark:text-gray-300">
                                             {z.cities.length ? (
                                                 <span title={z.cities.map(title).join(', ')}>
                                                     {z.cities.slice(0, 4).map(title).join(', ')}
@@ -114,17 +114,17 @@ export default function DeliverySettingsManager() {
                                                 <span className="text-gray-400">All other towns</span>
                                             )}
                                         </td>
-                                        <td className="px-3 py-3.5 font-medium text-gray-900 dark:text-gray-100">{ksh(z.fee)}</td>
-                                        <td className="px-3 py-3.5 text-gray-600 dark:text-gray-300">
+                                        <td data-label="Fee" className="px-3 py-3.5 font-medium text-gray-900 dark:text-gray-100">{ksh(z.fee)}</td>
+                                        <td data-label="Weight" className="px-3 py-3.5 text-gray-600 dark:text-gray-300">
                                             {Number(z.perKgFee) > 0 ? `KSh ${Number(z.perKgFee)}/kg over ${Number(z.includedKg)} kg` : '—'}
                                         </td>
-                                        <td className="px-3 py-3.5 text-gray-600 dark:text-gray-300">
+                                        <td data-label="Free over" className="px-3 py-3.5 text-gray-600 dark:text-gray-300">
                                             {z.freeAbove != null ? `KSh ${Number(z.freeAbove).toLocaleString('en-KE')}` : '—'}
                                         </td>
-                                        <td className="px-3 py-3.5 text-gray-600 dark:text-gray-300">{eta(z)}</td>
-                                        <td className="px-3 py-3.5">{z.allowsCod ? <Check className="h-4 w-4 text-green-600" /> : <span className="text-gray-300">—</span>}</td>
+                                        <td data-label="ETA" className="px-3 py-3.5 text-gray-600 dark:text-gray-300">{eta(z)}</td>
+                                        <td data-label="COD" className="px-3 py-3.5">{z.allowsCod ? <Check className="h-4 w-4 text-green-600" /> : <span className="text-gray-300">—</span>}</td>
                                         {canEdit && (
-                                            <td className="px-6 py-3.5 text-right">
+                                            <td className="px-6 py-3.5 text-right rt-actions">
                                                 <div className="flex justify-end gap-1">
                                                     <Button size="sm" variant="ghost" onClick={() => setEditing(z)} aria-label={`Edit ${z.name}`}>
                                                         <Pencil className="h-4 w-4" />

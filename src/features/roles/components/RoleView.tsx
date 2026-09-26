@@ -60,7 +60,7 @@ export function RoleView({
         <div className="space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between flex-wrap gap-3">
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                     <button
                         onClick={onBack}
                         className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -72,7 +72,7 @@ export function RoleView({
                     <div className="w-9 h-9 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 flex items-center justify-center shrink-0">
                         <ShieldCheckIcon className="w-5 h-5" />
                     </div>
-                    <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{role.name}</h1>
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">{role.name}</h1>
                     <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
                         {role.isSystem ? 'Built-in' : 'Custom'}
                     </span>

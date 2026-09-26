@@ -95,8 +95,8 @@ export function RelatedOrders({
             )}
 
             <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white dark:border-gray-700/70 dark:bg-gray-800">
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[600px] text-left text-[13px]">
+                <div className="relative overflow-x-auto">
+                    <table className="w-full min-w-[600px] text-left text-[13px] responsive-table">
                         <thead>
                             <tr className="border-b border-gray-100 bg-gray-50/60 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700/70 dark:bg-gray-900/30 dark:text-gray-400">
                                 <th className="px-4 py-2.5">Order</th>
@@ -113,19 +113,19 @@ export function RelatedOrders({
                                 const units = productId ? line?.quantity ?? 0 : (o.items ?? []).reduce((n, i) => n + i.quantity, 0);
                                 return (
                                     <tr key={o.id} onClick={() => router.push(`/orders/${o.id}`)} className="cursor-pointer transition hover:bg-gray-50/80 dark:hover:bg-gray-700/30">
-                                        <td className="px-4 py-3">
+                                        <td className="px-4 py-3 rt-full">
                                             <p className="font-mono text-[12.5px] font-semibold text-gray-900 dark:text-white">{o.orderNumber}</p>
                                             <p className="text-xs text-gray-400">{new Date(o.createdAt).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                                         </td>
-                                        {showCustomer && <td className="max-w-[160px] truncate px-3 py-3 text-gray-700 dark:text-gray-200">{o.customerName}</td>}
-                                        <td className="px-3 py-3">
+                                        {showCustomer && <td data-label="Customer" className="max-w-[160px] truncate px-3 py-3 text-gray-700 dark:text-gray-200">{o.customerName}</td>}
+                                        <td data-label="Status" className="px-3 py-3">
                                             <span className={`inline-flex rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${STATUS_STYLE[o.status]}`}>{title(o.status)}</span>
                                         </td>
-                                        <td className={`px-3 py-3 text-xs font-medium ${PAYMENT_STYLE[o.paymentStatus] ?? 'text-gray-500'}`}>
+                                        <td data-label="Payment" className={`px-3 py-3 text-xs font-medium ${PAYMENT_STYLE[o.paymentStatus] ?? 'text-gray-500'}`}>
                                             {o.paymentStatus === 'PENDING' ? 'Unpaid' : title(o.paymentStatus)}
                                         </td>
-                                        <td className="px-3 py-3 text-right text-gray-700 tabular-nums dark:text-gray-200">{units}</td>
-                                        <td className="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums dark:text-white">
+                                        <td data-label={productId ? 'Qty' : 'Items'} className="px-3 py-3 text-right text-gray-700 tabular-nums dark:text-gray-200">{units}</td>
+                                        <td data-label={productId ? 'Line total' : 'Total'} className="px-4 py-3 text-right font-semibold text-gray-900 tabular-nums dark:text-white">
                                             {formatMoney(line ? line.subtotal : o.total, o.currency)}
                                         </td>
                                     </tr>

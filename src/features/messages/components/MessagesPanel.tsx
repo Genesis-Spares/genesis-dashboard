@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import {
+    ArrowLeftIcon,
     ChatBubbleLeftRightIcon,
     CheckCircleIcon,
     EnvelopeIcon,
@@ -100,7 +101,8 @@ export function MessagesPanel() {
     return (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[380px_1fr]">
             {/* ── inbox list ─────────────────────────── */}
-            <section className={`${card} flex min-h-[560px] flex-col overflow-hidden`}>
+            {/* below lg: list first; tapping a message swaps to the thread (with a back button) */}
+            <section className={`${card} ${selectedId ? 'hidden lg:flex' : 'flex'} min-h-[320px] lg:min-h-[560px] flex-col overflow-hidden`}>
                 <div className="space-y-3 border-b border-gray-100 p-4 dark:border-gray-700/70">
                     <div className="relative">
                         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -144,7 +146,7 @@ export function MessagesPanel() {
                     )}
                     {messages.map((m) => (
                         <li key={m.id}>
-                            <button onClick={() => setSelectedId(m.id)}
+                            <button onClick={() => { setSelectedId(m.id); document.querySelector('main')?.scrollTo({ top: 0 }); }}
                                 className={`w-full px-4 py-3 text-left transition ${activeId === m.id ? 'bg-blue-50/70 dark:bg-blue-500/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'}`}>
                                 <div className="flex items-center gap-2">
                                     <span className={`h-2 w-2 shrink-0 rounded-full ${PRIORITY_DOT[m.priority]}`} title={`${label(m.priority)} priority`} />
@@ -174,7 +176,14 @@ export function MessagesPanel() {
             </section>
 
             {/* ── thread ─────────────────────────────── */}
-            <section className={`${card} min-h-[560px]`}>
+            <section className={`${card} ${selectedId ? 'block' : 'hidden lg:block'} lg:min-h-[560px]`}>
+                <button
+                    type="button"
+                    onClick={() => setSelectedId(undefined)}
+                    className="flex w-full items-center gap-1.5 border-b border-gray-100 px-4 py-3 text-sm font-medium text-gray-600 dark:border-gray-700/70 dark:text-gray-300 lg:hidden"
+                >
+                    <ArrowLeftIcon className="h-4 w-4" /> All messages
+                </button>
                 {activeId ? <Thread key={activeId} id={activeId} me={me} canUpdate={canUpdate} /> : (
                     <div className="flex h-full min-h-[560px] flex-col items-center justify-center gap-2 text-sm text-gray-400">
                         <ChatBubbleLeftRightIcon className="h-8 w-8" /> Select a message.

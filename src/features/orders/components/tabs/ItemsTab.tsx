@@ -18,7 +18,7 @@ export function ItemsTab({ items, currency }: ItemsTabProps) {
             {items.length === 0 ? (
                 <div className="p-8 text-center text-sm text-gray-400">No items on this order.</div>
             ) : (
-                <div className="overflow-x-auto mt-4">
+                <div className="relative overflow-x-auto mt-4">
                     <table className="w-full">
                         <thead>
                             <tr className="bg-blue-50/60 dark:bg-blue-900/10">

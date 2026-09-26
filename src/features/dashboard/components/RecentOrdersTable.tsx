@@ -60,8 +60,8 @@ export function RecentOrdersTable({ limit = 6 }: { limit?: number }) {
                 <h2 className="text-sm font-semibold text-gray-900 dark:text-white">Recent orders</h2>
                 <Link href="/orders" className="text-xs font-medium text-blue-600 hover:underline dark:text-blue-400">View all orders</Link>
             </div>
-            <div className="overflow-x-auto">
-                <table className="w-full min-w-[640px] text-left text-[13px]">
+            <div className="relative overflow-x-auto">
+                <table className="w-full min-w-[640px] text-left text-[13px] responsive-table">
                     <thead>
                         <tr className="border-y border-gray-100 bg-gray-50/60 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700/70 dark:bg-gray-900/30 dark:text-gray-400">
                             <th className="px-5 py-2.5">Order</th>
@@ -97,19 +97,19 @@ function OrderRow({ order: o }: { order: Order }) {
 
     return (
         <tr onClick={() => router.push(`/orders/${o.id}`)} className="cursor-pointer transition hover:bg-gray-50/80 dark:hover:bg-gray-700/30">
-            <td className="px-5 py-3">
+            <td className="px-5 py-3 rt-full">
                 <p className="font-mono text-[12.5px] font-semibold text-gray-900 dark:text-white">{o.orderNumber}</p>
                 <p className="text-xs text-gray-400">{when(o.createdAt)}</p>
             </td>
-            <td className="max-w-[180px] truncate px-3 py-3 text-gray-700 dark:text-gray-200">{o.customerName}</td>
-            <td className="px-3 py-3">
+            <td data-label="Customer" className="max-w-[180px] truncate px-3 py-3 text-gray-700 dark:text-gray-200">{o.customerName}</td>
+            <td data-label="Status" className="px-3 py-3">
                 <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${STATUS_STYLE[o.status]}`}>
                     {title(o.status)}
                 </span>
             </td>
-            <td className={`px-3 py-3 text-xs font-medium ${PAYMENT_STYLE[o.paymentStatus] ?? 'text-gray-500'}`}>{title(o.paymentStatus)}</td>
-            <td className="px-3 py-3 text-right font-semibold text-gray-900 tabular-nums dark:text-white">{formatMoney(o.total, o.currency)}</td>
-            <td className="px-5 py-3 text-right">
+            <td data-label="Payment" className={`px-3 py-3 text-xs font-medium ${PAYMENT_STYLE[o.paymentStatus] ?? 'text-gray-500'}`}>{title(o.paymentStatus)}</td>
+            <td data-label="Total" className="px-3 py-3 text-right font-semibold text-gray-900 tabular-nums dark:text-white">{formatMoney(o.total, o.currency)}</td>
+            <td className="px-5 py-3 text-right rt-actions">
                 {canUpdate && next && (
                     <button
                         onClick={(e) => { e.stopPropagation(); setTarget(next); }}

@@ -43,8 +43,8 @@ export function PartNumbersEditor({ rows, onChange }: { rows: ProductPartNumber[
     return (
         <div className="space-y-3">
             {rows.length > 0 && (
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[560px] text-left text-sm">
+                <div className="relative overflow-x-auto">
+                    <table className="w-full min-w-[560px] text-left text-sm responsive-table">
                         <thead>
                             <tr className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                 <th className="w-52 pb-1.5 pr-2">Type</th><th className="w-40 pb-1.5 pr-2">Brand</th><th className="pb-1.5 pr-2">Part number *</th><th className="w-9" />
@@ -53,14 +53,14 @@ export function PartNumbersEditor({ rows, onChange }: { rows: ProductPartNumber[
                         <tbody>
                             {rows.map((r, i) => (
                                 <tr key={i}>
-                                    <td className="py-1 pr-2">
+                                    <td className="py-1 pr-2 rt-full">
                                         <select className={cell} value={r.type} onChange={(e) => set(i, { type: e.target.value as PartNumberType })}>
                                             {TYPES.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}
                                         </select>
                                     </td>
-                                    <td className="py-1 pr-2"><input className={cell} value={r.brand ?? ''} onChange={(e) => set(i, { brand: e.target.value })} placeholder="Toyota / Bosch" /></td>
-                                    <td className="py-1 pr-2"><input className={`${cell} font-mono`} value={r.number} onChange={(e) => set(i, { number: e.target.value })} placeholder="04465-12592" /></td>
-                                    <td className="py-1">
+                                    <td data-label="Brand" className="py-1 pr-2"><input className={cell} value={r.brand ?? ''} onChange={(e) => set(i, { brand: e.target.value })} placeholder="Toyota / Bosch" /></td>
+                                    <td data-label="Part number *" className="py-1 pr-2"><input className={`${cell} font-mono`} value={r.number} onChange={(e) => set(i, { number: e.target.value })} placeholder="04465-12592" /></td>
+                                    <td className="py-1 rt-actions">
                                         <button type="button" onClick={() => onChange(rows.filter((_, j) => j !== i))} aria-label="Remove number" className="rounded-md p-1.5 text-gray-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10">
                                             <TrashIcon className="h-4 w-4" />
                                         </button>

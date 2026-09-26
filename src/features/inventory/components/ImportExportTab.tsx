@@ -94,18 +94,18 @@ export function ImportExportTab() {
                             {preview.summary.invalid > 0 && <span className="inline-flex items-center gap-1.5 text-amber-700 dark:text-amber-400"><ExclamationTriangleIcon className="h-4 w-4" /> {preview.summary.invalid} will be skipped</span>}
                         </div>
                         <div className="max-h-80 overflow-auto rounded-lg border border-gray-200 dark:border-gray-700">
-                            <table className="w-full text-left text-[13px]">
+                            <table className="w-full text-left text-[13px] responsive-table">
                                 <thead className="sticky top-0 bg-gray-50 text-[11px] font-semibold uppercase text-gray-500 dark:bg-gray-900">
                                     <tr><th className="px-3 py-2">Row</th><th className="px-3 py-2">SKU</th><th className="px-3 py-2">Product</th><th className="px-3 py-2 text-right">Stock</th><th className="px-3 py-2" /></tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700/70">
                                     {preview.preview.map((l) => (
                                         <tr key={l.row} className={l.problem ? 'bg-amber-50/60 dark:bg-amber-500/5' : ''}>
-                                            <td className="px-3 py-1.5 text-gray-400">{l.row + 1}</td>
-                                            <td className="px-3 py-1.5 font-mono">{l.sku || '—'}</td>
-                                            <td className="px-3 py-1.5 text-gray-700 dark:text-gray-200">{l.name ?? ''}</td>
-                                            <td className="px-3 py-1.5 text-right tabular-nums">{l.problem ? '' : `${l.current} → ${l.after}`}</td>
-                                            <td className="px-3 py-1.5 text-xs text-amber-700 dark:text-amber-400">{l.problem}</td>
+                                            <td data-label="Row" className="px-3 py-1.5 text-gray-400">{l.row + 1}</td>
+                                            <td data-label="SKU" className="px-3 py-1.5 font-mono">{l.sku || '—'}</td>
+                                            <td className="px-3 py-1.5 text-gray-700 dark:text-gray-200 rt-full">{l.name ?? ''}</td>
+                                            <td data-label="Stock" className="px-3 py-1.5 text-right tabular-nums">{l.problem ? '' : `${l.current} → ${l.after}`}</td>
+                                            <td className="px-3 py-1.5 text-xs text-amber-700 dark:text-amber-400 rt-actions">{l.problem}</td>
                                         </tr>
                                     ))}
                                 </tbody>

@@ -145,3 +145,27 @@
 .gx-email-content p.is-editor-empty:first-child::before { content: attr(data-placeholder); color: #9ca3af; float: left; height: 0; pointer-events: none; }
 .dark .gx-email-content blockquote { color: #9ca3af; border-color: #4b5563; }
 .dark .gx-email-content a { color: #93c5fd; }
+
+/*
+ * Responsive tables — add `responsive-table` to a <table> and `data-label="Column"` to its <td>s.
+ * Below md (768px) each row becomes a card: column labels above values in a two-column grid.
+ * `rt-full` (or data-rt="full") makes a cell span the card (use it for the main cell), `rt-actions`
+ * (or data-rt="actions") right-aligns a full-width row of buttons at the bottom of the card.
+ */
+@media (max-width: 767px) {
+  .responsive-table { min-width: 0 !important; }
+  .responsive-table thead { display: none; }
+  .responsive-table, .responsive-table tbody { display: block; width: 100%; }
+  .responsive-table tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.625rem 1rem; padding: 0.875rem 1rem; }
+  .responsive-table td { display: block; min-width: 0; padding: 0 !important; text-align: left !important; overflow-wrap: anywhere; }
+  .responsive-table td[data-label]::before {
+    content: attr(data-label); display: block; margin-bottom: 0.125rem;
+    font-size: 11px; font-weight: 500; letter-spacing: 0.04em; text-transform: uppercase; color: #9ca3af;
+  }
+  .responsive-table td.rt-full, .responsive-table td[data-rt="full"], .responsive-table td[colspan] { grid-column: 1 / -1; }
+  .responsive-table td.rt-full::before, .responsive-table td[data-rt="full"]::before { display: none; }
+  .responsive-table td.rt-actions, .responsive-table td[data-rt="actions"] { grid-column: 1 / -1; text-align: right !important; }
+  .responsive-table td.rt-actions::before, .responsive-table td[data-rt="actions"]::before { display: none; }
+  .responsive-table td:empty, .responsive-table td[data-rt="hide"] { display: none; }
+  .responsive-table input, .responsive-table select { max-width: 100%; }
+}

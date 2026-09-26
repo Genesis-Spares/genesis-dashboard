@@ -18,3 +18,17 @@ export function useIsMobile() {
 
   return !!isMobile
 }
+/** true below Tailwind's `lg` breakpoint (1024px), where the sidebar becomes a slide-in drawer */
+export function useIsDrawerNav() {
+  const [below, setBelow] = React.useState(false)
+
+  React.useEffect(() => {
+    const mql = window.matchMedia("(max-width: 1023px)")
+    const onChange = () => setBelow(mql.matches)
+    mql.addEventListener("change", onChange)
+    onChange()
+    return () => mql.removeEventListener("change", onChange)
+  }, [])
+
+  return below
+}

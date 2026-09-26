@@ -17,7 +17,7 @@ export function SuppliersTab() {
         <div className="space-y-3">
             <div className="flex justify-end"><Btn tone="primary" onClick={() => setEditing({ name: '' })}><PlusIcon className="h-4 w-4" /> Add supplier</Btn></div>
             <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white dark:border-gray-700/70 dark:bg-gray-800">
-                <table className="w-full text-left text-[13px]">
+                <table className="w-full text-left text-[13px] responsive-table">
                     <thead>
                         <tr className="border-b border-gray-100 bg-gray-50/60 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700/70 dark:bg-gray-900/30 dark:text-gray-400">
                             <th className="px-4 py-2.5">Supplier</th><th className="px-3 py-2.5">Contact</th><th className="px-3 py-2.5 text-right">Deliveries</th><th className="px-4 py-2.5" />
@@ -28,10 +28,10 @@ export function SuppliersTab() {
                         {!isLoading && !data?.length && <tr><td colSpan={4} className="px-4 py-12 text-center text-gray-500">No suppliers yet — add one here or when receiving a delivery.</td></tr>}
                         {data?.map((s) => (
                             <tr key={s.id} className={s.isActive ? '' : 'opacity-50'}>
-                                <td className="px-4 py-2.5"><p className="font-medium text-gray-900 dark:text-white">{s.name}</p>{s.notes && <p className="text-xs text-gray-400">{s.notes}</p>}</td>
-                                <td className="px-3 py-2.5 text-gray-600 dark:text-gray-300">{[s.contactName, s.phone, s.email].filter(Boolean).join(' · ') || '—'}</td>
-                                <td className="px-3 py-2.5 text-right tabular-nums">{s._count?.receipts ?? 0}</td>
-                                <td className="px-4 py-2.5 text-right"><button onClick={() => setEditing(s)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"><PencilSquareIcon className="h-4 w-4" /> Edit</button></td>
+                                <td className="px-4 py-2.5 rt-full"><p className="font-medium text-gray-900 dark:text-white">{s.name}</p>{s.notes && <p className="text-xs text-gray-400">{s.notes}</p>}</td>
+                                <td data-label="Contact" className="px-3 py-2.5 text-gray-600 dark:text-gray-300">{[s.contactName, s.phone, s.email].filter(Boolean).join(' · ') || '—'}</td>
+                                <td data-label="Deliveries" className="px-3 py-2.5 text-right tabular-nums">{s._count?.receipts ?? 0}</td>
+                                <td className="px-4 py-2.5 text-right rt-actions"><button onClick={() => setEditing(s)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"><PencilSquareIcon className="h-4 w-4" /> Edit</button></td>
                             </tr>
                         ))}
                     </tbody>

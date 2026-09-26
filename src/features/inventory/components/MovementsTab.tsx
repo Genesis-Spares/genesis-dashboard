@@ -38,8 +38,8 @@ export function MovementsTab({ productId, productLabel, onClearProduct }: { prod
                 </select>
             </div>
             <div className="overflow-hidden rounded-xl border border-gray-200/80 bg-white dark:border-gray-700/70 dark:bg-gray-800">
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[680px] text-left text-[13px]">
+                <div className="relative overflow-x-auto">
+                    <table className="w-full min-w-[680px] text-left text-[13px] responsive-table">
                         <thead>
                             <tr className="border-b border-gray-100 bg-gray-50/60 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700/70 dark:bg-gray-900/30 dark:text-gray-400">
                                 <th className="px-4 py-2.5">When</th>{!productId && <th className="px-3 py-2.5">Product</th>}<th className="px-3 py-2.5">Type</th>
@@ -54,12 +54,12 @@ export function MovementsTab({ productId, productLabel, onClearProduct }: { prod
                                 const orderLink = ['ORDER', 'ORDER_CANCELLED', 'ORDER_FAILED'].includes(m.reason) && m.reference;
                                 return (
                                     <tr key={m.id}>
-                                        <td className="whitespace-nowrap px-4 py-2.5 text-gray-500 tabular-nums">{new Date(m.createdAt).toLocaleString('en-KE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
-                                        {!productId && <td className="px-3 py-2.5">{m.product ? <><p className="font-medium text-gray-900 dark:text-white">{m.product.name}</p><p className="font-mono text-xs text-gray-400">{m.product.sku}</p></> : <span className="text-gray-400">Deleted product</span>}</td>}
-                                        <td className="px-3 py-2.5"><span className={`rounded px-1.5 py-0.5 text-xs font-medium ${r.cls}`}>{r.label}</span></td>
-                                        <td className={`px-3 py-2.5 text-right font-semibold tabular-nums ${m.change > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{m.change > 0 ? `+${m.change}` : m.change}</td>
-                                        <td className="px-3 py-2.5 text-right tabular-nums text-gray-900 dark:text-white">{m.stockAfter}</td>
-                                        <td className="px-4 py-2.5 text-xs text-gray-500">
+                                        <td data-label="When" className="whitespace-nowrap px-4 py-2.5 text-gray-500 tabular-nums">{new Date(m.createdAt).toLocaleString('en-KE', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}</td>
+                                        {!productId && <td className="px-3 py-2.5 rt-full">{m.product ? <><p className="font-medium text-gray-900 dark:text-white">{m.product.name}</p><p className="font-mono text-xs text-gray-400">{m.product.sku}</p></> : <span className="text-gray-400">Deleted product</span>}</td>}
+                                        <td data-label="Type" className="px-3 py-2.5"><span className={`rounded px-1.5 py-0.5 text-xs font-medium ${r.cls}`}>{r.label}</span></td>
+                                        <td data-label="Change" className={`px-3 py-2.5 text-right font-semibold tabular-nums ${m.change > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>{m.change > 0 ? `+${m.change}` : m.change}</td>
+                                        <td data-label="Stock after" className="px-3 py-2.5 text-right tabular-nums text-gray-900 dark:text-white">{m.stockAfter}</td>
+                                        <td data-label="Details" className="px-4 py-2.5 text-xs text-gray-500">
                                             {m.note}{orderLink && <Link href={`/orders/${m.reference}`} className="text-blue-600 hover:underline dark:text-blue-400"> View order</Link>}
                                             {m.actor && <span className="block text-gray-400">by {m.actor}</span>}
                                         </td>

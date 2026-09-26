@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
-import { ArrowUturnLeftIcon, CheckIcon, InboxArrowDownIcon, MagnifyingGlassIcon, BanknotesIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { ArrowUturnLeftIcon, CheckIcon, InboxArrowDownIcon, MagnifyingGlassIcon, BanknotesIcon, XMarkIcon, ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { usePermissions } from '@/lib/hooks/usePermissions';
 import { formatMoney } from '@/features/orders/components/OrderTable';
 import { Btn, Modal, fieldCls, labelCls } from '@/features/orders/components/OrderDialogs';
@@ -47,7 +47,8 @@ export function ReturnsDesk() {
 
     return (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-[380px_1fr]">
-            <section className={`${card} flex min-h-[520px] flex-col overflow-hidden`}>
+            {/* below lg: list first; tapping a return swaps to its detail (with a back button) */}
+            <section className={`${card} ${selectedId ? 'hidden lg:flex' : 'flex'} min-h-[320px] lg:min-h-[520px] flex-col overflow-hidden`}>
                 <div className="space-y-3 border-b border-gray-100 p-4 dark:border-gray-700/70">
                     <div className="relative">
                         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
@@ -72,7 +73,7 @@ export function ReturnsDesk() {
                     )}
                     {list.map((r) => (
                         <li key={r.id}>
-                            <button onClick={() => setSelectedId(r.id)} className={`w-full px-4 py-3 text-left transition ${active?.id === r.id ? 'bg-blue-50/70 dark:bg-blue-500/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'}`}>
+                            <button onClick={() => { setSelectedId(r.id); document.querySelector('main')?.scrollTo({ top: 0 }); }} className={`w-full px-4 py-3 text-left transition ${active?.id === r.id ? 'bg-blue-50/70 dark:bg-blue-500/10' : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'}`}>
                                 <div className="flex items-center gap-2">
                                     <span className="font-mono text-[12.5px] font-semibold text-gray-900 dark:text-white">{r.rmaNumber}</span>
                                     <span className={`ml-auto rounded px-1.5 py-0.5 text-[10.5px] font-semibold ring-1 ring-inset ${BADGE[r.status]}`}>{LABEL[r.status]}</span>
@@ -85,7 +86,14 @@ export function ReturnsDesk() {
                 </ul>
             </section>
 
-            <section className={`${card} min-h-[520px]`}>
+            <section className={`${card} ${selectedId ? 'block' : 'hidden lg:block'} lg:min-h-[520px]`}>
+                <button
+                    type="button"
+                    onClick={() => setSelectedId(undefined)}
+                    className="flex w-full items-center gap-1.5 border-b border-gray-100 px-4 py-3 text-sm font-medium text-gray-600 dark:border-gray-700/70 dark:text-gray-300 lg:hidden"
+                >
+                    <ArrowLeftIcon className="h-4 w-4" /> All returns
+                </button>
                 {active ? <ReturnDetail key={active.id} r={active} /> : (
                     <div className="flex h-full min-h-[520px] items-center justify-center text-sm text-gray-400">Select a return.</div>
                 )}

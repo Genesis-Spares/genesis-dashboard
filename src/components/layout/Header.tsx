@@ -14,7 +14,6 @@ import {
     Bars3Icon,
 } from '@heroicons/react/24/outline';
 import { Menu, Transition } from '@headlessui/react';
-import { useIsMobile } from '@/hooks/use-mobile';
 
 interface HeaderProps {
     onMenuClick?: () => void;
@@ -23,7 +22,6 @@ interface HeaderProps {
 export const Header = ({ onMenuClick }: HeaderProps) => {
     const router = useRouter();
     const { user, logout } = useAuthStore();
-    const isMobile = useIsMobile();
     const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const handleLogout = async () => {
@@ -40,23 +38,20 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
 
     return (
         <header className="sticky top-0 z-20 h-16 shrink-0 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700">
-            <div className="flex items-center justify-between h-full px-4 md:px-6 gap-2 md:gap-4">
-                {/* Mobile Menu Button */}
-                {isMobile && (
+            <div className="flex items-center justify-between h-full px-3 sm:px-4 md:px-6 gap-2 md:gap-4">
+                {/* Menu button + logo (below lg, where the sidebar is a drawer) */}
+                <div className="flex items-center gap-1 lg:hidden">
                     <button
                         onClick={onMenuClick}
-                        className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+                        aria-label="Open menu"
+                        className="-ml-1 p-2 rounded-lg text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
                     >
                         <Bars3Icon className="w-6 h-6" />
                     </button>
-                )}
-
-                {/* Logo - Mobile */}
-                {isMobile && (
-                    <Link href="/" className="text-lg font-bold text-blue-600 dark:text-blue-400">
+                    <Link href="/dashboard" className="text-lg font-bold text-blue-600 dark:text-blue-400">
                         Genesis
                     </Link>
-                )}
+                </div>
 
                 {/* Search - Hidden on mobile */}
                 <div className="flex-1 max-w-md hidden md:block">
@@ -103,7 +98,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                             leaveFrom="transform scale-100 opacity-100"
                             leaveTo="transform scale-95 opacity-0"
                         >
-                            <Menu.Items className="absolute right-0 mt-2 w-56 origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
+                            <Menu.Items className="absolute right-0 z-50 mt-2 w-56 max-w-[calc(100vw-1.5rem)] origin-top-right bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-100 dark:border-gray-700 divide-y divide-gray-100 dark:divide-gray-700">
                                 <div className="px-4 py-3">
                                     <p className="text-sm font-medium text-gray-900 dark:text-white">
                                         {user?.firstName
@@ -129,7 +124,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                                     <Menu.Item>
                                         {({ active }) => (
                                             <Link
-                                                href="/profile"
+                                                href="/settings/profile"
                                                 className={`block px-4 py-2 text-sm ${active ? 'bg-gray-50 dark:bg-gray-700' : ''
                                                     }`}
                                             >

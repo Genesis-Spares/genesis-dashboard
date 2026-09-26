@@ -99,7 +99,7 @@ export function ReportsPage() {
                 </div>
             </div>
 
-            <div className="flex gap-1 overflow-x-auto border-b border-gray-200 dark:border-gray-700">
+            <div className="flex gap-1 relative overflow-x-auto border-b border-gray-200 dark:border-gray-700">
                 {TABS.map((t) => (
                     <button key={t.id} onClick={() => setTab(t.id)}
                         className={`-mb-px whitespace-nowrap border-b-2 px-3 py-2.5 text-sm font-medium transition ${tab === t.id ? 'border-blue-600 text-blue-600 dark:text-blue-400' : 'border-transparent text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}>

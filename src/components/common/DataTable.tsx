@@ -39,6 +39,32 @@ export interface DataTableColumn<T> {
     width?: string; // e.g. 'w-32'
     sortable?: boolean;
     sortKey?: string; // If different from id
+    /**
+     * How the column shows in the phone card layout (below md). Defaults: `actions` →
+     * "actions", `image`/`avatar`/`icon` → "media", the first other column → "primary",
+     * everything else → "field" (label + value).
+     */
+    mobile?: 'primary' | 'media' | 'actions' | 'field' | 'hidden';
+}
+
+type MobileRole = NonNullable<DataTableColumn<unknown>['mobile']>;
+
+function mobileRoles<T>(columns: DataTableColumn<T>[]): Map<string, MobileRole> {
+    const roles = new Map<string, MobileRole>();
+    let hasPrimary = columns.some((c) => c.mobile === 'primary');
+    for (const col of columns) {
+        let role: MobileRole | undefined = col.mobile;
+        if (!role) {
+            if (col.id === 'actions') role = 'actions';
+            else if (['image', 'avatar', 'icon'].includes(col.id)) role = 'media';
+            else if (!hasPrimary) {
+                role = 'primary';
+                hasPrimary = true;
+            } else role = 'field';
+        }
+        roles.set(col.id, role);
+    }
+    return roles;
 }
 
 export interface DataTableAction<T> {
@@ -186,6 +212,8 @@ export function DataTable<T>({
     const someSelected = selectedIds.length > 0 && !allSelected;
 
     const pageList = useMemo(() => buildPageList(page, pageCount), [page, pageCount]);
+    const roles = useMemo(() => mobileRoles(columns), [columns]);
+    const sortableColumns = columns.filter((c) => c.sortable);
 
     const toggleAll = () => {
         if (!onSelectionChange) return;
@@ -272,16 +300,16 @@ export function DataTable<T>({
     return (
         <div className="bg-white dark:bg-gray-800 rounded border border-gray-100 dark:border-gray-700">
             {/* Toolbar: tabs + search + actions */}
-            <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3 sm:p-4">
                 {tabs && tabs.length > 0 ? (
-                    <div className="flex items-center gap-1 bg-white dark:bg-gray-800">
+                    <div className="-mx-1 flex max-w-full items-center gap-1 overflow-x-auto px-1 bg-white dark:bg-gray-800">
                         {tabs.map((tab) => {
                             const isActive = tab.id === activeTab;
                             return (
                                 <button
                                     key={tab.id}
                                     onClick={() => onTabChange?.(tab.id)}
-                                    className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${isActive
+                                    className={`shrink-0 whitespace-nowrap px-3 py-2 rounded-xl text-sm font-medium transition-colors ${isActive
                                         ? 'bg-blue-50 text-gray-900 dark:bg-blue-900/20 dark:text-white'
                                         : 'text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200'
                                         }`}
@@ -303,12 +331,12 @@ export function DataTable<T>({
                         })}
                     </div>
                 ) : (
-                    <div />
+                    <div className="hidden sm:block" />
                 )}
 
-                <div className="flex items-center gap-2">
+                <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
                     {hasSearch && (
-                        <div className="relative">
+                        <div className="relative min-w-0 flex-1 sm:flex-none">
                             <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                             <input
                                 type="text"
@@ -318,13 +346,13 @@ export function DataTable<T>({
                                     onSearchChange?.(e.target.value);
                                 }}
                                 placeholder={searchPlaceholder}
-                                className="pl-9 pr-3 py-2 text-sm w-56 bg-gray-50 dark:bg-gray-700 rounded border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none transition-colors"
+                                className="pl-9 pr-3 py-2 text-base sm:text-sm w-full sm:w-56 bg-gray-50 dark:bg-gray-700 rounded border border-transparent focus:border-blue-500 focus:bg-white dark:focus:bg-gray-800 focus:outline-none transition-colors"
                             />
                         </div>
                     )}
 
                     {hasBatchActions && (
-                        <div className="flex items-center gap-2">
+                        <div className="order-last flex w-full flex-wrap items-center gap-2 sm:order-none sm:w-auto">
                             {batchActions.map((action) => {
                                 const variantClasses = {
                                     danger: 'text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20',
@@ -396,8 +424,137 @@ export function DataTable<T>({
                 </div>
             </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
+            {/* Phone layout: one card per row (below md) */}
+            <div className="md:hidden border-t border-gray-100 dark:border-gray-700">
+                {(sortableColumns.length > 0 && onSortChange) || (selectable && data.length > 0) ? (
+                    <div className="flex items-center justify-between gap-3 px-4 py-2 bg-blue-50/60 dark:bg-blue-900/10">
+                        {selectable && data.length > 0 ? (
+                            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
+                                <input
+                                    type="checkbox"
+                                    checked={allSelected}
+                                    ref={(el) => {
+                                        if (el) el.indeterminate = someSelected;
+                                    }}
+                                    onChange={toggleAll}
+                                    className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                />
+                                Select all
+                            </label>
+                        ) : (
+                            <span />
+                        )}
+                        {sortableColumns.length > 0 && onSortChange && (
+                            <label className="flex min-w-0 items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span className="shrink-0">Sort</span>
+                                <select
+                                    value={sortConfig ? `${sortConfig.key}:${sortConfig.direction}` : ''}
+                                    onChange={(e) => {
+                                        const [key, direction] = e.target.value.split(':');
+                                        onSortChange(key ? { key, direction: direction as 'asc' | 'desc' } : null);
+                                    }}
+                                    className="min-w-0 max-w-[11rem] rounded border border-gray-200 bg-white px-2 py-1.5 text-sm text-gray-700 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                >
+                                    <option value="">Default</option>
+                                    {sortableColumns.flatMap((c) => {
+                                        const key = c.sortKey || c.id;
+                                        return [
+                                            <option key={`${key}:asc`} value={`${key}:asc`}>{c.header} ↑</option>,
+                                            <option key={`${key}:desc`} value={`${key}:desc`}>{c.header} ↓</option>,
+                                        ];
+                                    })}
+                                </select>
+                            </label>
+                        )}
+                    </div>
+                ) : null}
+
+                {isError ? (
+                    <div className="flex flex-col items-center justify-center gap-2 px-4 py-10 text-center">
+                        <ExclamationTriangleIcon className="w-6 h-6 text-red-400" />
+                        <p className="text-sm text-red-500 dark:text-red-400">{errorMessage}</p>
+                        {onRetry && (
+                            <button
+                                onClick={onRetry}
+                                type="button"
+                                className="mt-1 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300"
+                            >
+                                <ArrowPathIcon className="w-4 h-4" />
+                                Reload
+                            </button>
+                        )}
+                    </div>
+                ) : isLoading ? (
+                    <p className="py-10 text-center text-sm text-gray-400">Loading...</p>
+                ) : data.length === 0 ? (
+                    <p className="px-4 py-10 text-center text-sm text-gray-400">{emptyMessage}</p>
+                ) : (
+                    <ul className="divide-y divide-gray-100 dark:divide-gray-700">
+                        {data.map((row) => {
+                            const id = getRowId(row);
+                            const primary = columns.filter((c) => roles.get(c.id) === 'primary');
+                            const media = columns.filter((c) => roles.get(c.id) === 'media');
+                            const fields = columns.filter((c) => roles.get(c.id) === 'field');
+                            const actionCols = columns.filter((c) => roles.get(c.id) === 'actions');
+                            const hasActions = actionCols.length > 0 || (rowActions && rowActions.length > 0);
+                            return (
+                                <li key={id} className="flex gap-3 px-4 py-3">
+                                    {selectable && (
+                                        <input
+                                            type="checkbox"
+                                            aria-label="Select row"
+                                            checked={selectedIds.includes(id)}
+                                            onChange={() => toggleRow(id)}
+                                            className="mt-1 w-4 h-4 shrink-0 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                    )}
+                                    {media.map((c) => (
+                                        <div key={c.id} className="shrink-0">{c.accessor(row)}</div>
+                                    ))}
+                                    <div className="min-w-0 flex-1">
+                                        {primary.map((c) => (
+                                            <div key={c.id} className="min-w-0 break-words text-sm font-medium text-gray-900 dark:text-white">
+                                                {c.accessor(row)}
+                                            </div>
+                                        ))}
+                                        {fields.length > 0 && (
+                                            <dl className="mt-2 grid grid-cols-2 gap-x-4 gap-y-2">
+                                                {fields.map((c) => (
+                                                    <div key={c.id} className="min-w-0">
+                                                        <dt className="text-[11px] font-medium uppercase tracking-wide text-gray-400">{c.header}</dt>
+                                                        <dd className="mt-0.5 min-w-0 break-words text-sm text-gray-700 dark:text-gray-200">{c.accessor(row)}</dd>
+                                                    </div>
+                                                ))}
+                                            </dl>
+                                        )}
+                                        {hasActions && (
+                                            <div className="mt-2 flex flex-wrap items-center justify-end gap-3 border-t border-gray-50 pt-2 dark:border-gray-700/60">
+                                                {actionCols.map((c) => (
+                                                    <div key={c.id}>{c.accessor(row)}</div>
+                                                ))}
+                                                {rowActions?.map((action) => (
+                                                    <button
+                                                        key={action.label}
+                                                        onClick={() => action.onClick(row)}
+                                                        aria-label={action.label}
+                                                        className={`p-1.5 ${action.className ?? 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+                                                        type="button"
+                                                    >
+                                                        {action.icon}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                )}
+            </div>
+
+            {/* Table (md and up) */}
+            <div className="relative hidden overflow-x-auto md:block">
                 <table className="w-full">
                     <thead>
                         <tr className="bg-blue-50/60 dark:bg-blue-900/10">
@@ -539,18 +696,19 @@ export function DataTable<T>({
 
             {/* Pagination */}
             {onPageChange && pageCount > 0 && !isError && (
-                <div className="flex items-center justify-between gap-3 p-4 flex-wrap">
+                <div className="flex items-center justify-between gap-2 p-3 sm:gap-3 sm:p-4">
                     <button
                         onClick={() => onPageChange(page - 1)}
                         disabled={page <= 1}
+                        aria-label="Previous page"
                         className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         type="button"
                     >
                         <ArrowLeftIcon className="w-4 h-4" />
-                        Previous
+                        <span className="hidden sm:inline">Previous</span>
                     </button>
 
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex flex-wrap items-center justify-center gap-1.5">
                         {pageList.map((p, i) =>
                             p === 'ellipsis' ? (
                                 <span
@@ -578,10 +736,11 @@ export function DataTable<T>({
                     <button
                         onClick={() => onPageChange(page + 1)}
                         disabled={page >= pageCount}
+                        aria-label="Next page"
                         className="flex items-center gap-1.5 px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
                         type="button"
                     >
-                        Next
+                        <span className="hidden sm:inline">Next</span>
                         <ArrowRightIcon className="w-4 h-4" />
                     </button>
                 </div>
