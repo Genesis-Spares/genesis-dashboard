@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/lib/stores/authStore';
 import {
-    BellIcon,
     SunIcon,
     UserCircleIcon,
     ArrowRightOnRectangleIcon,
@@ -15,6 +14,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { Menu, Transition } from '@headlessui/react';
 import { InstallPrompt } from '@/components/pwa/InstallPrompt';
+import { NotificationBell } from '@/features/notifications/components/NotificationBell';
 
 interface HeaderProps {
     onMenuClick?: () => void;
@@ -69,10 +69,7 @@ export const Header = ({ onMenuClick }: HeaderProps) => {
                 {/* Right Actions */}
                 <div className="flex items-center gap-2 md:gap-3 shrink-0">
                     <InstallPrompt />
-                    <button className="relative p-2 rounded-full bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600">
-                        <BellIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-                        <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full"></span>
-                    </button>
+                    <NotificationBell />
 
                     <button className="p-2 rounded-full bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600 hidden sm:block">
                         <SunIcon className="w-5 h-5 text-gray-600 dark:text-gray-300" />
