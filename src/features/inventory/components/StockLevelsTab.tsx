@@ -61,8 +61,8 @@ export function StockLevelsTab({ initialFilter = 'all', onHistory }: { initialFi
             </div>
 
             <div className={`${card} overflow-hidden`}>
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[720px] text-left text-[13px]">
+                <div className="relative overflow-x-auto">
+                    <table className="w-full min-w-[720px] text-left text-[13px] responsive-table">
                         <thead>
                             <tr className="border-b border-gray-100 bg-gray-50/60 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700/70 dark:bg-gray-900/30 dark:text-gray-400">
                                 <th className="px-4 py-2.5">Product</th><th className="px-3 py-2.5">Status</th><th className="px-3 py-2.5 text-right">In stock</th>
@@ -77,16 +77,16 @@ export function StockLevelsTab({ initialFilter = 'all', onHistory }: { initialFi
                                 const cost = p.costPrice != null ? Number(p.costPrice) : null;
                                 return (
                                     <tr key={p.id} className="hover:bg-gray-50/60 dark:hover:bg-gray-700/20">
-                                        <td className="px-4 py-2.5">
+                                        <td className="px-4 py-2.5 rt-full">
                                             <Link href={`/products/${p.id}`} className="font-medium text-gray-900 hover:text-blue-600 dark:text-white">{p.name}</Link>
                                             <p className="font-mono text-xs text-gray-400">{p.sku}{p.brand ? ` · ${p.brand}` : ''}</p>
                                         </td>
-                                        <td className="px-3 py-2.5"><span className={`rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${st.cls}`}>{st.label}</span></td>
-                                        <td className="px-3 py-2.5 text-right text-base font-semibold tabular-nums text-gray-900 dark:text-white">{p.stockQty}</td>
-                                        <td className="px-3 py-2.5 text-right tabular-nums text-gray-500">{p.reorderLevel}{p.minStockQty == null && <span className="text-[10px] text-gray-400"> (default)</span>}</td>
-                                        <td className="px-3 py-2.5 text-right tabular-nums text-gray-600 dark:text-gray-300">{cost != null ? formatMoney(cost) : <span className="text-gray-400">—</span>}</td>
-                                        <td className="px-3 py-2.5 text-right tabular-nums text-gray-600 dark:text-gray-300">{cost != null ? formatMoney(cost * Math.max(0, p.stockQty)) : '—'}</td>
-                                        <td className="px-4 py-2.5 text-right">
+                                        <td data-label="Status" className="px-3 py-2.5"><span className={`whitespace-nowrap rounded-md px-2 py-0.5 text-xs font-medium ring-1 ring-inset ${st.cls}`}>{st.label}</span></td>
+                                        <td data-label="In stock" className="px-3 py-2.5 text-right text-base font-semibold tabular-nums text-gray-900 dark:text-white">{p.stockQty}</td>
+                                        <td data-label="Reorder at" className="px-3 py-2.5 text-right tabular-nums text-gray-500">{p.reorderLevel}{p.minStockQty == null && <span className="text-[10px] text-gray-400"> (default)</span>}</td>
+                                        <td data-label="Unit cost" className="px-3 py-2.5 text-right tabular-nums text-gray-600 dark:text-gray-300">{cost != null ? formatMoney(cost) : <span className="text-gray-400">—</span>}</td>
+                                        <td data-label="Value" className="px-3 py-2.5 text-right tabular-nums text-gray-600 dark:text-gray-300">{cost != null ? formatMoney(cost * Math.max(0, p.stockQty)) : '—'}</td>
+                                        <td className="px-4 py-2.5 text-right rt-actions">
                                             <div className="inline-flex gap-1">
                                                 <button onClick={() => setAdjusting(p)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"><AdjustmentsHorizontalIcon className="h-4 w-4" /> Adjust</button>
                                                 <button onClick={() => onHistory(p)} className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium text-gray-600 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"><ClockIcon className="h-4 w-4" /> History</button>

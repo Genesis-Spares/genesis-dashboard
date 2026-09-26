@@ -231,7 +231,7 @@ export function ProductTable({
                 <div className="relative group inline-block max-w-full">
                     <button
                         onClick={onView ? () => onView(product) : undefined}
-                        className="font-medium text-gray-800 dark:text-gray-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left"
+                        className="block max-w-full font-medium text-gray-800 dark:text-gray-100 truncate hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-left"
                     >
                         {product.name}
                     </button>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowDownTrayIcon, ChevronDownIcon, ChevronUpIcon } from '@heroicons/react/20/solid';
 import { formatMoney } from '@/features/orders/components/OrderTable';
 import { downloadCsv, toCsv } from '@/features/inventory/csv';
@@ -56,7 +56,7 @@ export function SortTh<K extends string>({ label, k, sort, align = 'right', clas
 export function ExportButton({ filename, rows, disabled }: { filename: string; rows: () => (string | number | null | undefined)[][]; disabled?: boolean }) {
     return (
         <button type="button" disabled={disabled} onClick={() => downloadCsv(filename, toCsv(rows()))}
-            className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
+            className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 disabled:opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700">
             <ArrowDownTrayIcon className="h-4 w-4" /> Export CSV
         </button>
     );
@@ -81,10 +81,40 @@ export function ShareBar({ share }: { share: number }) {
     );
 }
 
+/**
+ * Copies each column's header text onto its cells (`data-label`) so the `responsive-table`
+ * styles can show rows as labelled cards on phones. Runs again whenever rows change.
+ */
+function useCardLabels(ref: React.RefObject<HTMLTableElement | null>) {
+    useEffect(() => {
+        const table = ref.current;
+        if (!table) return;
+        const apply = () => {
+            const heads = Array.from(table.querySelectorAll('thead th')).map((th) => th.textContent?.trim() ?? '');
+            const main = heads.findIndex((h) => h && h !== '#');
+            table.querySelectorAll('tbody tr').forEach((tr) => {
+                Array.from(tr.children).forEach((cell, i) => {
+                    if (!(cell instanceof HTMLTableCellElement) || cell.colSpan > 1) return;
+                    if (heads[i] === '#') cell.dataset.rt = 'hide'; // rank column: card order already shows it
+                    else if (i === main) cell.dataset.rt = 'full';
+                    else if (heads[i]) cell.dataset.label = heads[i];
+                    else cell.dataset.rt = 'actions';
+                });
+            });
+        };
+        apply();
+        const observer = new MutationObserver(apply);
+        observer.observe(table, { childList: true, subtree: true });
+        return () => observer.disconnect();
+    }, [ref]);
+}
+
 export function TableShell({ children, loading, empty, cols }: { children: React.ReactNode; loading?: boolean; empty?: string | false; cols: number }) {
+    const tableRef = useRef<HTMLTableElement>(null);
+    useCardLabels(tableRef);
     return (
-        <div className={`${card} overflow-x-auto`}>
-            <table className="w-full min-w-[720px] text-left text-[13px]">
+        <div className={`${card} relative overflow-x-auto`}>
+            <table ref={tableRef} className="w-full min-w-[720px] text-left text-[13px] responsive-table">
                 {children}
                 {(loading || empty) && (
                     <tbody>

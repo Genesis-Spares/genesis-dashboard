@@ -64,8 +64,8 @@ export function FitmentEditor({
             </label>
 
             {fitments.length > 0 && (
-                <div className="overflow-x-auto">
-                    <table className="w-full min-w-[640px] text-left text-sm">
+                <div className="relative overflow-x-auto">
+                    <table className="w-full min-w-[640px] text-left text-sm responsive-table">
                         <thead>
                             <tr className="text-xs font-medium text-gray-500 dark:text-gray-400">
                                 <th className="pb-1.5 pr-2">Make *</th><th className="pb-1.5 pr-2">Model *</th><th className="w-24 pb-1.5 pr-2">From</th>
@@ -75,12 +75,12 @@ export function FitmentEditor({
                         <tbody>
                             {fitments.map((f, i) => (
                                 <tr key={i}>
-                                    <td className="py-1 pr-2"><input list="fitment-makes" className={cell} value={f.make} onChange={(e) => set(i, { make: e.target.value })} placeholder="Toyota" /></td>
-                                    <td className="py-1 pr-2"><input className={cell} value={f.model} onChange={(e) => set(i, { model: e.target.value })} placeholder="Axio" /></td>
-                                    <td className="py-1 pr-2"><input type="number" className={cell} value={f.yearFrom ?? ''} onChange={(e) => set(i, { yearFrom: year(e.target.value) })} placeholder="2010" /></td>
-                                    <td className="py-1 pr-2"><input type="number" className={cell} value={f.yearTo ?? ''} onChange={(e) => set(i, { yearTo: year(e.target.value) })} placeholder="2015" /></td>
-                                    <td className="py-1 pr-2"><input className={cell} value={f.engine ?? ''} onChange={(e) => set(i, { engine: e.target.value })} placeholder="1.5L 1NZ-FE" /></td>
-                                    <td className="py-1">
+                                    <td className="py-1 pr-2 rt-full"><input list="fitment-makes" className={cell} value={f.make} onChange={(e) => set(i, { make: e.target.value })} placeholder="Toyota" /></td>
+                                    <td data-label="Model *" className="py-1 pr-2"><input className={cell} value={f.model} onChange={(e) => set(i, { model: e.target.value })} placeholder="Axio" /></td>
+                                    <td data-label="From" className="py-1 pr-2"><input type="number" className={cell} value={f.yearFrom ?? ''} onChange={(e) => set(i, { yearFrom: year(e.target.value) })} placeholder="2010" /></td>
+                                    <td data-label="To" className="py-1 pr-2"><input type="number" className={cell} value={f.yearTo ?? ''} onChange={(e) => set(i, { yearTo: year(e.target.value) })} placeholder="2015" /></td>
+                                    <td data-label="Engine / notes" className="py-1 pr-2"><input className={cell} value={f.engine ?? ''} onChange={(e) => set(i, { engine: e.target.value })} placeholder="1.5L 1NZ-FE" /></td>
+                                    <td className="py-1 rt-actions">
                                         <button type="button" onClick={() => onChange(fitments.filter((_, j) => j !== i))} aria-label="Remove vehicle" className="rounded-md p-1.5 text-gray-400 hover:bg-rose-50 hover:text-rose-600 dark:hover:bg-rose-500/10">
                                             <TrashIcon className="h-4 w-4" />
                                         </button>

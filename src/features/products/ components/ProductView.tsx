@@ -106,7 +106,7 @@ export function ProductView({ product, onBack, onEdit, onDelete, onStatusChange,
             <div className="space-y-0">
                 {/* Header */}
                 <div className="flex items-center justify-between flex-wrap gap-3 pb-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                         <button
                             onClick={onBack}
                             className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
@@ -115,7 +115,7 @@ export function ProductView({ product, onBack, onEdit, onDelete, onStatusChange,
                             Back
                         </button>
                         <div className="h-5 w-px bg-gray-200 dark:bg-gray-700" />
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">
                             {product.name}
                         </h1>
                         <span className="text-sm text-gray-400">
@@ -178,7 +178,7 @@ export function ProductView({ product, onBack, onEdit, onDelete, onStatusChange,
                 </div>
 
                 {/* Full-width tab strip */}
-                <div className="border-b border-gray-100 dark:border-gray-800 flex gap-6 overflow-x-auto">
+                <div className="border-b border-gray-100 dark:border-gray-800 flex gap-6 relative overflow-x-auto">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}
@@ -233,7 +233,7 @@ export function ProductView({ product, onBack, onEdit, onDelete, onStatusChange,
                                         </div>
 
                                         {sortedImages.length > 1 && (
-                                            <div className="flex gap-2 mt-4 overflow-x-auto">
+                                            <div className="flex gap-2 mt-4 relative overflow-x-auto">
                                                 {sortedImages.map((img, index) => (
                                                     <button
                                                         key={img.id}
@@ -301,8 +301,8 @@ export function ProductView({ product, onBack, onEdit, onDelete, onStatusChange,
 
                     {activeTab === 'variants' && (
                         <InfoCard title={`Variants (${product.variants.length})`}>
-                            <div className="overflow-x-auto">
-                                <table className="w-full text-sm">
+                            <div className="relative overflow-x-auto">
+                                <table className="w-full text-sm responsive-table">
                                     <thead>
                                         <tr className="text-left text-gray-400 border-b border-gray-100 dark:border-gray-800">
                                             <th className="py-2 pr-4 font-medium">SKU</th>
@@ -314,12 +314,12 @@ export function ProductView({ product, onBack, onEdit, onDelete, onStatusChange,
                                     <tbody>
                                         {product.variants.map((variant) => (
                                             <tr key={variant.id} className="border-b border-gray-50 dark:border-gray-800 last:border-0">
-                                                <td className="py-2 pr-4 text-gray-500">{variant.sku}</td>
-                                                <td className="py-2 pr-4 font-medium text-gray-800 dark:text-gray-100">
+                                                <td data-label="SKU" className="py-2 pr-4 text-gray-500">{variant.sku}</td>
+                                                <td className="py-2 pr-4 font-medium text-gray-800 dark:text-gray-100 rt-full">
                                                     {variant.name}
                                                 </td>
-                                                <td className="py-2 pr-4">{formatPrice(variant.price)}</td>
-                                                <td className="py-2 pr-4">{variant.stockQty}</td>
+                                                <td data-label="Price" className="py-2 pr-4">{formatPrice(variant.price)}</td>
+                                                <td data-label="Stock" className="py-2 pr-4">{variant.stockQty}</td>
                                             </tr>
                                         ))}
                                     </tbody>

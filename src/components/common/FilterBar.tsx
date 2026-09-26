@@ -88,7 +88,8 @@ export function FilterBar({
             const rect = buttonRef.current.getBoundingClientRect();
             setPosition({
                 top: rect.bottom + window.scrollY + 8,
-                left: rect.right - 320 + window.scrollX,
+                // keep the 320px panel on screen on narrow viewports
+                left: Math.max(8, Math.min(rect.right - 320, window.innerWidth - 328)) + window.scrollX,
             });
         }
     };
@@ -230,7 +231,7 @@ export function FilterBar({
             {isOpen && createPortal(
                 <div
                     ref={popupRef}
-                    className="fixed z-50 w-80 bg-white dark:bg-gray-800 rounded shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+                    className="fixed z-50 w-80 max-w-[calc(100vw-1rem)] bg-white dark:bg-gray-800 rounded shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden"
                     style={{
                         top: position.top,
                         left: position.left,

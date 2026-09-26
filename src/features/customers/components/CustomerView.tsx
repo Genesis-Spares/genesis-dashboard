@@ -162,7 +162,7 @@ export function CustomerView({
             <div className="space-y-0">
                 {/* Header */}
                 <div className="flex items-center justify-between flex-wrap gap-3 pb-4">
-                    <div className="flex items-center gap-3">
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
                         {/* Back Button */}
                         <button
                             onClick={onBack}
@@ -183,8 +183,8 @@ export function CustomerView({
                         </div>
 
                         {/* Name & Info */}
-                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">{fullName}</h1>
-                        <span className="text-sm text-gray-400">{customer.email}</span>
+                        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white break-words">{fullName}</h1>
+                        <span className="text-sm text-gray-400 break-all">{customer.email}</span>
 
                         {/* Status */}
                         <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
@@ -251,7 +251,7 @@ export function CustomerView({
                 </div>
 
                 {/* Tab Strip */}
-                <div className="border-b border-gray-100 dark:border-gray-800 flex gap-6 overflow-x-auto">
+                <div className="border-b border-gray-100 dark:border-gray-800 flex gap-6 relative overflow-x-auto">
                     {tabs.map((tab) => (
                         <button
                             key={tab.id}

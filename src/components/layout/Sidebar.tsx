@@ -17,7 +17,7 @@ import {
     XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { resolveIcon } from '@/lib/utils/iconMap';
-import { useIsMobile } from '@/hooks/use-mobile';
+import { useIsDrawerNav } from '@/hooks/use-mobile';
 
 interface SidebarProps {
     mobileOpen?: boolean;
@@ -29,19 +29,33 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
     const { config, collapsed, toggleCollapsed, fetchSidebar } = useSidebarStore();
     const { user } = useAuthStore();
     const { can } = usePermissions();
-    const isMobile = useIsMobile();
+    // below lg the sidebar is an off-canvas drawer; visibility itself is CSS-driven so it's
+    // right on first paint, this flag only picks drawer vs collapsible-rail rendering
+    const isMobile = useIsDrawerNav();
     const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
     useEffect(() => {
         fetchSidebar();
     }, []);
 
-    // Close mobile sidebar when route changes
+    // Close the drawer when the route changes
     useEffect(() => {
-        if (isMobile && onMobileClose) {
-            onMobileClose();
-        }
-    }, [pathname, isMobile]);
+        onMobileClose?.();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [pathname]);
+
+    // Close the drawer with Escape, and stop the page behind it scrolling while open
+    useEffect(() => {
+        if (!mobileOpen) return;
+        const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onMobileClose?.();
+        document.addEventListener('keydown', onKey);
+        const prev = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.removeEventListener('keydown', onKey);
+            document.body.style.overflow = prev;
+        };
+    }, [mobileOpen, onMobileClose]);
 
     const toggleExpand = (itemId: string) => {
         setExpandedItems((prev) =>
@@ -101,13 +115,11 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
         );
     };
 
-    // Determine if sidebar should be visible
-    const isVisible = isMobile ? mobileOpen : true;
-    const sidebarWidth = isMobile ? 'w-80' : (collapsed ? 'w-16' : 'w-64');
+    const railWidth = collapsed ? 'lg:w-16' : 'lg:w-64';
 
     if (!config) {
         return (
-            <div className={`${sidebarWidth} h-screen shrink-0 bg-white dark:bg-gray-800 animate-pulse`}>
+            <div className={`hidden lg:block ${railWidth} h-screen shrink-0 bg-white dark:bg-gray-800 animate-pulse`}>
                 <div className="p-4">
                     <div className="h-8 bg-gray-100 rounded-xl dark:bg-gray-700"></div>
                 </div>
@@ -117,19 +129,18 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
 
     return (
         <>
-            {/* Mobile Overlay */}
-            {isMobile && mobileOpen && (
-                <div
-                    className="fixed inset-0 z-40 bg-black/50"
-                    onClick={onMobileClose}
-                />
-            )}
+            {/* Drawer backdrop (below lg) */}
+            <div
+                aria-hidden="true"
+                onClick={onMobileClose}
+                className={`fixed inset-0 z-40 bg-black/50 transition-opacity lg:hidden ${mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0'}`}
+            />
 
             <aside
-                className={`fixed lg:relative z-50 flex flex-col h-screen bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 transition-all duration-300 ${isMobile
-                    ? `w-80 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}`
-                    : `${sidebarWidth} shrink-0`
-                    }`}
+                aria-label="Main navigation"
+                // off-canvas and closed: keep its links out of the tab order / screen readers
+                inert={isMobile && !mobileOpen ? true : undefined}
+                className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-[min(20rem,85vw)] flex-col bg-white dark:bg-gray-800 border-r border-gray-100 dark:border-gray-700 transition-[transform,width] duration-300 lg:static lg:h-screen lg:shrink-0 lg:translate-x-0 ${railWidth} ${mobileOpen ? 'translate-x-0 shadow-xl' : '-translate-x-full'}`}
             >
                 {/* Logo */}
                 <div className="flex items-center justify-between h-16 px-4 shrink-0">
@@ -145,13 +156,15 @@ export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => 
                         {isMobile ? (
                             <button
                                 onClick={onMobileClose}
-                                className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 dark:hover:bg-gray-700"
+                                aria-label="Close menu"
+                                className="p-2 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 dark:hover:bg-gray-700"
                             >
                                 <XMarkIcon className="w-5 h-5" />
                             </button>
                         ) : (
                             <button
                                 onClick={toggleCollapsed}
+                                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
                                 className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 dark:hover:bg-gray-700"
                             >
                                 {collapsed ? (

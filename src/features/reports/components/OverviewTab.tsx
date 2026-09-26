@@ -64,7 +64,7 @@ export function OverviewTab({ range, label, onOpen }: { range: ReportRange; labe
                     {pLoading ? <div className="h-40 animate-pulse rounded-lg bg-gray-50 dark:bg-gray-700/40" /> : !p?.products.length ? (
                         <p className="py-8 text-center text-sm text-gray-500">No sales in this period.</p>
                     ) : (
-                        <table className="w-full text-left text-[13px]">
+                        <table className="w-full text-left text-[13px] responsive-table">
                             <thead>
                                 <tr className="text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
                                     <th className="pb-2">Product</th><th className="pb-2 text-right">Units</th><th className="pb-2 text-right">Revenue</th><th className="pb-2 text-right">Margin</th>
@@ -73,14 +73,14 @@ export function OverviewTab({ range, label, onOpen }: { range: ReportRange; labe
                             <tbody className="divide-y divide-gray-100 dark:divide-gray-700/70">
                                 {p.products.slice(0, 5).map((r) => (
                                     <tr key={r.productId}>
-                                        <td className="py-2 pr-3">
+                                        <td className="py-2 pr-3 rt-full">
                                             {r.deleted ? <span className="font-medium text-gray-900 dark:text-white">{r.name}</span> :
                                                 <Link href={`/products/${r.productId}`} className="font-medium text-gray-900 hover:text-blue-600 dark:text-white">{r.name}</Link>}
                                             <span className="block font-mono text-xs text-gray-400">{r.sku}</span>
                                         </td>
-                                        <td className="py-2 text-right tabular-nums">{int(r.units)}</td>
-                                        <td className="py-2 text-right font-medium tabular-nums text-gray-900 dark:text-white">{money(r.revenue)}</td>
-                                        <td className="py-2 text-right tabular-nums"><Margin value={r.margin} /></td>
+                                        <td data-label="Units" className="py-2 text-right tabular-nums">{int(r.units)}</td>
+                                        <td data-label="Revenue" className="py-2 text-right font-medium tabular-nums text-gray-900 dark:text-white">{money(r.revenue)}</td>
+                                        <td data-label="Margin" className="py-2 text-right tabular-nums"><Margin value={r.margin} /></td>
                                     </tr>
                                 ))}
                             </tbody>

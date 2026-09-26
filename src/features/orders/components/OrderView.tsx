@@ -166,16 +166,21 @@ export function OrderView({ order, onBack }: OrderViewProps) {
                         </div>
                         <ul className="divide-y divide-gray-100 border-t border-gray-100 dark:divide-gray-700/70 dark:border-gray-700/70">
                             {(order.items ?? []).map((i) => (
-                                <li key={i.id} className="flex items-center gap-3 px-5 py-3">
+                                <li key={i.id} className="flex items-start gap-3 px-4 py-3 sm:items-center sm:px-5">
                                     <span className="flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-gray-50 dark:bg-gray-700/50">
                                         {i.image ? <img src={i.image} alt="" className="h-full w-full object-contain p-1" /> : <span className="text-xs text-gray-400">—</span>}
                                     </span>
-                                    <div className="min-w-0 flex-1">
-                                        <Link href={`/products/${i.productId}`} className="block truncate text-[13px] font-medium text-gray-900 hover:text-blue-600 dark:text-white">{i.name}</Link>
-                                        <p className="font-mono text-xs text-gray-400">{i.sku}</p>
+                                    {/* phones: name/SKU on top, qty × price and line total underneath */}
+                                    <div className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:gap-3">
+                                        <div className="min-w-0 flex-1">
+                                            <Link href={`/products/${i.productId}`} className="block text-[13px] font-medium text-gray-900 hover:text-blue-600 dark:text-white sm:truncate">{i.name}</Link>
+                                            <p className="font-mono text-xs text-gray-400 break-all">{i.sku}</p>
+                                        </div>
+                                        <div className="flex items-baseline justify-between gap-3 sm:contents">
+                                            <span className="text-xs text-gray-500 tabular-nums whitespace-nowrap">{i.quantity} × {formatMoney(i.unitPrice, order.currency)}</span>
+                                            <span className="text-right text-[13px] font-semibold text-gray-900 tabular-nums whitespace-nowrap dark:text-white sm:w-28">{formatMoney(i.subtotal, order.currency)}</span>
+                                        </div>
                                     </div>
-                                    <span className="text-xs text-gray-500 tabular-nums">{i.quantity} × {formatMoney(i.unitPrice, order.currency)}</span>
-                                    <span className="w-28 text-right text-[13px] font-semibold text-gray-900 tabular-nums dark:text-white">{formatMoney(i.subtotal, order.currency)}</span>
                                 </li>
                             ))}
                         </ul>

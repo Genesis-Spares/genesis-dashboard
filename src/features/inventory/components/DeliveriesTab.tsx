@@ -23,7 +23,7 @@ export function DeliveriesTab() {
                 <Btn tone="primary" onClick={() => setReceiving(true)}><TruckIcon className="h-4 w-4" /> Receive delivery</Btn>
             </div>
             <div className={`${card} overflow-hidden`}>
-                <table className="w-full text-left text-[13px]">
+                <table className="w-full text-left text-[13px] responsive-table">
                     <thead>
                         <tr className="border-b border-gray-100 bg-gray-50/60 text-[11px] font-semibold uppercase tracking-wide text-gray-500 dark:border-gray-700/70 dark:bg-gray-900/30 dark:text-gray-400">
                             <th className="px-4 py-2.5">GRN</th><th className="px-3 py-2.5">Supplier</th><th className="px-3 py-2.5">Items</th><th className="px-3 py-2.5 text-right">Units</th><th className="px-4 py-2.5 text-right">Cost</th>
@@ -34,14 +34,14 @@ export function DeliveriesTab() {
                         {!isLoading && !data?.data.length && <tr><td colSpan={5} className="px-4 py-12 text-center text-gray-500">No deliveries recorded yet.</td></tr>}
                         {data?.data.map((r) => (
                             <tr key={r.id}>
-                                <td className="px-4 py-2.5">
+                                <td className="px-4 py-2.5 rt-full">
                                     <p className="font-mono font-semibold text-gray-900 dark:text-white">{r.grnNumber}</p>
                                     <p className="text-xs text-gray-400">{new Date(r.createdAt).toLocaleDateString('en-KE', { day: 'numeric', month: 'short', year: 'numeric' })}{r.actor ? ` · ${r.actor}` : ''}</p>
                                 </td>
-                                <td className="px-3 py-2.5 text-gray-700 dark:text-gray-200">{r.supplier?.name ?? '—'}{r.supplierRef && <span className="block text-xs text-gray-400">Ref {r.supplierRef}</span>}</td>
-                                <td className="max-w-[280px] px-3 py-2.5 text-xs text-gray-500">{r.lines.map((l) => `${l.quantity}× ${l.sku}`).join(', ')}</td>
-                                <td className="px-3 py-2.5 text-right tabular-nums">{r.lines.reduce((n, l) => n + l.quantity, 0)}</td>
-                                <td className="px-4 py-2.5 text-right font-semibold tabular-nums text-gray-900 dark:text-white">{Number(r.totalCost) ? formatMoney(r.totalCost) : '—'}</td>
+                                <td data-label="Supplier" className="px-3 py-2.5 text-gray-700 dark:text-gray-200">{r.supplier?.name ?? '—'}{r.supplierRef && <span className="block text-xs text-gray-400">Ref {r.supplierRef}</span>}</td>
+                                <td data-label="Items" className="max-w-[280px] px-3 py-2.5 text-xs text-gray-500">{r.lines.map((l) => `${l.quantity}× ${l.sku}`).join(', ')}</td>
+                                <td data-label="Units" className="px-3 py-2.5 text-right tabular-nums">{r.lines.reduce((n, l) => n + l.quantity, 0)}</td>
+                                <td data-label="Cost" className="px-4 py-2.5 text-right font-semibold tabular-nums text-gray-900 dark:text-white">{Number(r.totalCost) ? formatMoney(r.totalCost) : '—'}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -131,15 +131,15 @@ function ReceiveDialog({ onClose }: { onClose: () => void }) {
             </div>
 
             {lines.length > 0 && (
-                <table className="w-full text-left text-sm">
+                <table className="w-full text-left text-sm responsive-table">
                     <thead><tr className="text-xs text-gray-500"><th className="pb-1">Product</th><th className="w-24 pb-1">Qty</th><th className="w-28 pb-1">Unit cost</th><th className="w-8" /></tr></thead>
                     <tbody>
                         {lines.map((l, i) => (
                             <tr key={l.productId}>
-                                <td className="py-1 pr-2"><p className="truncate font-medium text-gray-900 dark:text-white">{l.name}</p><p className="font-mono text-xs text-gray-400">{l.sku}</p></td>
-                                <td className="py-1 pr-2"><input type="number" min={1} className={fieldCls} value={l.quantity} onChange={(e) => set(i, { quantity: e.target.value })} /></td>
-                                <td className="py-1 pr-2"><input type="number" min={0} step="0.01" className={fieldCls} value={l.unitCost} onChange={(e) => set(i, { unitCost: e.target.value })} placeholder="—" /></td>
-                                <td className="py-1"><button type="button" onClick={() => setLines((ls) => ls.filter((_, j) => j !== i))} aria-label="Remove" className="rounded p-1 text-gray-400 hover:text-rose-600"><TrashIcon className="h-4 w-4" /></button></td>
+                                <td className="py-1 pr-2 rt-full"><p className="truncate font-medium text-gray-900 dark:text-white">{l.name}</p><p className="font-mono text-xs text-gray-400">{l.sku}</p></td>
+                                <td data-label="Qty" className="py-1 pr-2"><input type="number" min={1} className={fieldCls} value={l.quantity} onChange={(e) => set(i, { quantity: e.target.value })} /></td>
+                                <td data-label="Unit cost" className="py-1 pr-2"><input type="number" min={0} step="0.01" className={fieldCls} value={l.unitCost} onChange={(e) => set(i, { unitCost: e.target.value })} placeholder="—" /></td>
+                                <td className="py-1 rt-actions"><button type="button" onClick={() => setLines((ls) => ls.filter((_, j) => j !== i))} aria-label="Remove" className="rounded p-1 text-gray-400 hover:text-rose-600"><TrashIcon className="h-4 w-4" /></button></td>
                             </tr>
                         ))}
                     </tbody>
